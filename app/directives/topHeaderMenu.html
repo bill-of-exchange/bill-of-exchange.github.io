@@ -1,0 +1,184 @@
+<div class="navslide navwrap">
+
+    <div class="ui menu icon borderless grid">
+
+        <!-- Toggle Sidebar -->
+        <a id="sidebarBtn" class="item labeled openbtn">
+            <i class="icon ion-md-menu big"></i>
+        </a>
+
+        <!--<a id="fullScreenBtn" class="item labeled expandit colhidden" onclick="toggleFullScreen(document.body)">-->
+        <!--<i class="icon ion-md-expand big"></i>-->
+        <!--</a>-->
+
+        <div class="ui item centered">
+
+            <div class="content">
+
+                <h1 class="ui header" style="padding-bottom: 0em; margin-bottom: 0em">
+                    <span style="align-content: center;">Bills of Exchange Factory</span>
+                    <!--<sup ng-show="PRODUCTION" title="beta" style="color: #60c8fa">β</sup>-->
+                    <!--<sup ng-show="!PRODUCTION" title="SANDBOX" style="color: #fa33e6">sandbox</sup>-->
+                    <!--<sup ng-show="!PRODUCTION" title="SANDBOX" style="color: #60c8fa">αlpha</sup>-->
+                </h1>
+                <div style="font-size: medium; text-align: right; margin-top: 0em;padding-top: 0em; font-weight: bold; color: #9f3a38">
+                    <!--advanced tools for smart people-->
+                    <!--by Cryptonomica®-->
+                    by Cryptonomica
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function toggleFullScreen(elem) {
+
+        console.log('toggleFullScreen');
+
+        if (
+            (document.fullScreenElement !== undefined && document.fullScreenElement === null)
+            || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null)
+            || (document.mozFullScreen !== undefined && !document.mozFullScreen)
+            || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)
+        ) {
+            if (elem.requestFullScreen) {
+                elem.requestFullScreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullScreen) {
+                elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        } else {
+
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+
+    $(".ui.dropdown").dropdown({
+        allowCategorySelection: true,
+        transition: "fade up"
+    });
+
+    // using context
+    $('.ui.right.sidebar')
+        .sidebar({
+            context: $('#contextWrap .pusher'),
+            transition: 'slide out',
+            silent: true
+        })
+        .sidebar('attach events', '.rightsidebar');
+
+    $('#sidebarBtn')
+        .popup({
+            // position : 'right center',
+            target: '#sidebarBtn',
+            content: 'Collapse/expand sidebar'
+        });
+
+    $('#fullScreenBtn')
+        .popup({
+            // position : 'right center',
+            target: '#fullScreenBtn',
+            content: 'Toggle full screen mode'
+        });
+
+    $('#bookmarksBtn')
+        .popup({
+            // position : 'right center',
+            target: '#bookmarksBtn',
+            content: 'Click to see saved profiles and keys'
+        });
+
+    $('#accountOptions')
+        .popup({
+            // position : 'right center',
+            target: '#accountOptions',
+            content: 'Click to see account settings'
+        });
+
+    $('#messages')
+        .popup({
+            // position : 'right center',
+            target: '#messages',
+            content: 'Click to see messages'
+        });
+
+    /* -------- side bar : */
+
+    // var isMobile = window.matchMedia("only screen and (max-width: 768px)");
+    var isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
+    var sideBarIsCollapsed;
+    var sideBarIsCollapsedManually;
+
+    function collapseSidebar() {
+        $(".ui.sidebar.left").addClass("very thin icon");
+        $(".navslide").addClass("marginlefting");
+        // $(".sidebar.left span").addClass("displaynone");
+        $(".hiddenCollapse").addClass("displaynone");
+        sideBarIsCollapsed = true;
+    }
+
+    function expandSidebar() {
+        $(".ui.sidebar.left").removeClass("very thin icon");
+        $(".navslide").removeClass("marginlefting");
+        // $(".sidebar.left span").removeClass("displaynone");
+        $(".hiddenCollapse").removeClass("displaynone");
+        sideBarIsCollapsed = false;
+    }
+
+    if (isMobile) {
+        console.log(" this is mobile device");
+        collapseSidebar();
+        // $(".computer.only").toggleClass("displaynone");
+        $(".computer.only").addClass("displaynone");
+    }
+
+    // TODO: start collapsed
+    collapseSidebar();
+
+    $(".openbtn").on("click", function () {
+
+        if (sideBarIsCollapsed) {
+            expandSidebar();
+        } else {
+            collapseSidebar();
+            sideBarIsCollapsedManually = true;
+        }
+
+    });
+
+    $(window).resize(function () {
+
+        if (isMobile || $(window).width() <= 768) {
+
+            console.log(" this is mobile device");
+            collapseSidebar();
+            // $(".computer.only").toggleClass("displaynone");
+            $(".computer.only").addClass("displaynone");
+
+        } else {
+
+            $(".computer.only").removeClass("displaynone");
+            if (!sideBarIsCollapsedManually) {
+                expandSidebar();
+            }
+
+        }
+
+    });
+
+</script>

@@ -1,0 +1,10 @@
+
+= WebApp TODO
+Cryptonomica Ltd <support@cryptonomica.zendesk.com>
+v1.0, 2019-02-21
+:toc:
+
+== Tasks
+
+* [x] create AngularJS app skeleton
+

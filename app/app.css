@@ -1,0 +1,210 @@
+/* this file should be placed in index.html after all other css  */
+
+.line {
+    border-bottom: dotted 2px #eeeeee;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.withBorder {
+    text-align: center;
+    padding: 0.7em;
+    margin-top: 1em;
+    border-color: #c5c5c5;
+    border-style: solid;
+    border-width: thin;
+}
+
+/* -- modify theme */
+
+/*.segments {*/
+/*background-color: white;*/
+/*}*/
+
+.mainWrap {
+    background: rgba(237, 237, 237, 0.5);
+}
+
+#footer {
+    /*background-color: rgba(222, 222, 222, 1.0);*/
+    background-color: rgba(219, 219, 219, 1.0);
+}
+
+.ui .form {
+    font-size: 1em;
+}
+
+.ui .button {
+    font-size: 1em;
+}
+
+.ui.modal {
+    font-size: 1.1em;
+}
+
+ui. .message {
+    margin-bottom: 0em;
+}
+
+.ui.modal .actions .button {
+    font-size: 1em;
+}
+
+#alertDanger, #alertWarning, #alertInfo, #alertSuccess, #alertMessage {
+    margin-bottom: 0em;
+}
+
+.ui.menu {
+    font-size: 1em;
+}
+
+.ui.segments .segment, .ui.segment {
+    /* font-size: 1rem; */
+    font-size: 1.1em;
+}
+
+.ui.inverted.menu .item {
+    padding-bottom: 1.37em;
+    /*background: #4c4b50;*/
+}
+
+.ui.inverted.menu .active.item {
+
+    color: #60c8fa !important;
+
+    /*color: #67febb !important;*/
+    /*color: #85f9fa !important;*/
+    /*color: #00ffff !important;*/
+    /*color: #39ff14 !important;*/
+}
+
+.ui.inverted.menu .item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    /*color: rgba(169, 253, 255, 0.99) !important;*/
+    /*color: rgba(169, 253, 255, 0.99) !important;*/
+    /*color: purple !important;*/
+    /*color: purple !important;*/
+    color: #60c8fa !important;
+    /*color: rgb(236, 115, 255) !important;*/
+}
+
+/*.ui.header:hover {
+    color: #60c8fa !important;
+}*/
+
+/* ----------------------------  */
+textarea {
+    font-family: monospace;
+
+}
+
+/* http://stackoverflow.com/a/36426886/1697878 */
+/* Then, simply wrap the expression (for ex) in your html:
+<span class="capitalize">{{ uppercase_expression }}</span>
+No js needed */
+.capitalize {
+    text-transform: capitalize;
+}
+
+.textAreaWithKey {
+    font-size: 75% !important;
+}
+
+.keyverified {
+    color: green;
+    text-align: center;
+    border-top: solid;
+    border-top-color: green;
+    border-bottom-color: green !important;
+    border-bottom: solid !important;
+    padding: 2px !important;
+    margin-bottom: 0.5em !important;
+
+}
+
+.keynotverified {
+    color: red;
+    text-align: center;
+    border-top: solid;
+    border-top-color: red;
+    border-bottom-color: red !important;
+    border-bottom: solid !important;
+    padding: 2px !important;
+    margin-bottom: 0.5em !important;
+}
+
+/* ----------------------------  */
+
+::selection {
+    /*background-color: #CCE2FF;*/
+    background-color: rgba(133, 59, 255, 0.67);
+    color: rgba(0, 0, 0, 0.87);
+}
+
+a .socialLogo {
+    font-size: 1.4em;
+    color: #777777 !important;
+    /*color: #9c9c9c !important;*/
+    /*color: black !important;*/
+}
+
+a .socialLogo:hover {
+    /*color: white !important;*/
+    color: #60c8fa !important;
+}
+
+.sandboxMark {
+    background-color: darkred;
+    color: white;
+    font-weight: bold;
+    font-stretch: extra-expanded;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em
+}
+
+/* ----------------------------  */
+
+/* for video recording: */
+
+@keyframes blink {
+    50% {
+        border-color: rgba(255, 0, 0, 0.77);
+        background-color: rgba(255, 0, 0, 0.77);
+        color: rgba(255, 255, 255, 1);
+    }
+}
+
+.recording {
+    animation: blink .5s step-end infinite alternate;
+}
+
+.paused {
+    background-color: yellow;
+    color: black !important;
+}
+
+.video-status {
+    color: rgba(255, 255, 255, 0) !important;
+}
+
+/* ---------------------*/
+
+.verificationDoc {
+    height: 350px;
+}
+
+.my-file-input-element {
+    color: black;
+    /*border-color: black;*/
+    /*border-style: dotted;*/
+    /*border-width: thin;*/
+    /*padding: 0.5em;*/
+}
+
+/* ----- FORMS --------*/
+.inputError {
+    background: #FFF6F6 !important;
+    border-color: #E0B4B4 !important;
+    color: #9F3A38 !important;
+}
+
