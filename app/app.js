@@ -60,7 +60,7 @@ app.run([
                   $location,
                   $log) {
 
-            $rootScope.appVersion = '0.1';
+            $rootScope.appVersion = '0.1.1';
 
             /* --- UI */
             $rootScope.sidebarVisible = true;
