@@ -1,0 +1,23 @@
+{
+  "name": "bill-of-exchange.github.io",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "homepage": "https://bill-of-exchange.github.io",
+  "workspaces": [
+    "smart-contracts/",
+    "website/"
+  ],
+  "bugs": {
+    "url": "https://github.com/bill-of-exchange/bill-of-exchange.github.io/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bill-of-exchange/bill-of-exchange.github.io.git"
+  },
+  "license": "ISC",
+  "author": "Viktor Ageyev",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
