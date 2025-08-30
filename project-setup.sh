@@ -19,7 +19,7 @@ mkdir -p smart-contracts && mkdir -p website
 
 cd ./smart-contracts
 
-npx hardhat@next --init
+npx hardhat --init
 npm install @openzeppelin/contracts
 
 # to clean project:
