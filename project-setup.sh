@@ -16,6 +16,7 @@ mkdir -p smart-contracts && mkdir -p website
 #    "./website"
 #  ],
 
+
 cd ./smart-contracts
 
 npx hardhat@next --init
