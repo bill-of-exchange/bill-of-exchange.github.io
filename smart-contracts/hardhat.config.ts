@@ -1,16 +1,20 @@
-import type { HardhatUserConfig } from "hardhat/config";
+import type {HardhatUserConfig} from "hardhat/config";
+import {configVariable} from "hardhat/config";
 
+import hardhatVerify from "@nomicfoundation/hardhat-verify";
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
-import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxViemPlugin],
+  plugins: [
+      hardhatToolboxViemPlugin,
+      hardhatVerify
+  ],
   solidity: {
     profiles: {
       default: {
-        version: "0.8.28",
-      },
-      production: {
+      //   version: "0.8.28", // << keep only one profile, for verification to work
+      // },
+      // production: {
         version: "0.8.28",
         settings: {
           optimizer: {
@@ -37,6 +41,15 @@ const config: HardhatUserConfig = {
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
   },
+    verify: {
+     etherscan: {
+            apiKey: configVariable("ETHERSCAN_API_KEY"),
+        },
+        blockscout: {
+            // To verify contracts on Blockscout, you don't need to set an API key, nor any config.
+            enabled: true,
+        },
+    },
 };
 
 export default config;
