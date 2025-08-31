@@ -9,6 +9,7 @@ import hre from "hardhat";
 import {verifyContract, VerifyContractArgs} from "@nomicfoundation/hardhat-verify/verify";
 import * as console from "node:console";
 import * as process from "node:process";
+import {writeFileSync} from "node:fs";
 
 const contractName:string = "BillsOfExchange";
 const fullyQualifiedContractName:string = `contracts/${contractName}.sol:${contractName}`; //  "fully qualified contract name"
@@ -56,6 +57,35 @@ const main = async ()=>{
     }
 
     console.log(`✅ Deployed ${contractName} on ${chainName} at: ${contractAddress}`);
+
+    const jsonData = {
+        contractName: contractName,
+        chainName: chainName,
+        contractAddress: contractAddress,
+        deploymentTx: txHash,
+        // deploymentTxReceipt: receipt,
+    };
+
+    // const jsonString = JSON.stringify(jsonData, null, 2);
+    const serializedData = JSON.stringify(
+        jsonData,
+        (key, value) => {
+        if (typeof value === "bigint") {
+            return value.toString(); // Convert BigInt to string
+        }
+        return value; // Return other values as is
+    },
+        2
+    );
+
+    const filePath = './artifacts/data.json';
+
+    try {
+        writeFileSync(filePath, serializedData); // overwrites the file
+        console.log("Data saved to", filePath);
+    } catch (err) {
+        console.error('Failed to write file:', err);
+    }
 
     // ------ Verify contract
 
