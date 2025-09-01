@@ -8,15 +8,15 @@ npm install -g npm@latest
 
 npm init -y
 
-mkdir -p smart-contracts && mkdir -p website
-
 # edit root package.js :
 #  "workspaces": [
 #    "./smart-contracts",
 #    "./website"
 #  ],
 
+## =========== Hardhat
 
+mkdir -p smart-contracts
 cd ./smart-contracts
 
 # https://hardhat.org/docs/getting-started#installation
@@ -27,3 +27,10 @@ npm install @openzeppelin/contracts
 
 # to clean project:
 #  rm -rf node_modules/ smart-contracts/ website/ package.json package-lock.json
+
+## =========== Docusaurus
+
+npx create-docusaurus@latest ./website classic --typescript
+cd ./website
+
+
