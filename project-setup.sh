@@ -36,3 +36,22 @@ cd ./website
 # https://wagmi.sh/react/getting-started#manual-installation
 npm install wagmi viem@2.x @tanstack/react-query
 
+# create Wagmi config
+# https://wagmi.sh/react/getting-started#create-config
+touch ./src/wagmiConfig.ts
+
+# ======= Docusaurus swizzling
+# https://docusaurus.io/docs/swizzling
+
+## Wrapping site with <Root>
+# Docusaurus allows you to wrap the entire app in a custom root component.
+# Create src/theme/Root.js
+# see Docusaurus docs on swizzling: https://docusaurus.io/docs/swizzling#wrapper-your-site-with-root
+# In Root.js, wrap the children with <WagmiProvider> (and a React Query provider, since Wagmi uses TanStack Query internally)
+#
+# npm run swizzle @docusaurus/theme-classic Root # < does not work: Root is not a theme component; it’s a special extension point in Docusaurus
+#
+mkdir -p ./src/theme && touch ./src/theme/Root.tsx
+
+npm run swizzle @docusaurus/theme-classic Navbar/Content -- --wrap
+npm run swizzle @docusaurus/theme-classic Footer -- --eject
