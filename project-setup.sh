@@ -33,4 +33,6 @@ npm install @openzeppelin/contracts
 npx create-docusaurus@latest ./website classic --typescript
 cd ./website
 
+# https://wagmi.sh/react/getting-started#manual-installation
+npm install wagmi viem@2.x @tanstack/react-query
 
