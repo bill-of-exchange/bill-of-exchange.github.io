@@ -7,6 +7,8 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
 
 import styles from './index.module.css';
+import ConnectButtons from "@site/src/components/wagmi/ConnectButtons";
+import ConnectionInfo from "@site/src/components/wagmi/ConnectionInfo";
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -36,6 +38,14 @@ export default function Home(): ReactNode {
       title={`Hello from ${siteConfig.title}`}
       description="Description will go into a meta tag in <head />">
       <HomepageHeader />
+        <div>
+            <div title={"Our UI elements to test"}>Our elements</div>
+            <hr/>
+            <ConnectionInfo/>
+            <hr/>
+            <br/>
+            <ConnectButtons/>
+        </div>
       <main>
         <HomepageFeatures />
       </main>

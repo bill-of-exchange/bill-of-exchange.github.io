@@ -7,7 +7,12 @@ const queryClient = new QueryClient();
 
 export default function Root({children}) {
     return (
-        <WagmiProvider config={wagmiConfig}>
+        <WagmiProvider
+            config={wagmiConfig}
+            //
+            // https://wagmi.sh/react/api/WagmiProvider#reconnectonmount
+            reconnectOnMount={true}
+        >
             <QueryClientProvider client={queryClient}>
                 {children}
             </QueryClientProvider>
