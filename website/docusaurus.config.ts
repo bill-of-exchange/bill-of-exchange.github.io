@@ -72,6 +72,11 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+        defaultMode: 'dark', // 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: true, // false,
+    },
     navbar: {
       title: 'My Site',
       logo: {
@@ -86,10 +91,13 @@ const config: Config = {
           label: 'Tutorial',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
+        {type: 'custom-chainSwitcher', position: 'right'},
+        {type: 'custom-connectButtons', position: 'right'},
         {
           href: 'https://github.com/facebook/docusaurus',
           label: 'GitHub',
           position: 'right',
+          mobile: false // 👈 here
         },
       ],
     },

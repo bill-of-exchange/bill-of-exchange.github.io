@@ -28,3 +28,31 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* [vi] ===================== */
+
+.pointerOnHover {
+    cursor: pointer;
+}
+
+@media (max-width: 996px) {
+    .navbar__inner .nav-web3 {
+        display: none !important;
+    }
+}
+
+/* Optional: nicer layout when shown inside the hamburger sidebar */
+.navbar-sidebar .nav-web3 {
+    width: 90%;
+    /* here >>> */
+    margin-top: 0.3rem !important;
+}
+.navbar-sidebar .nav-web3 .button {
+
+    width: 90%;
+}
+.navbar-sidebar .nav-web3 > div {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .5rem;
+}

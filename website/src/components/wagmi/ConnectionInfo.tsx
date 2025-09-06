@@ -19,7 +19,8 @@ const ConnectionInfo = ()=>{
             <div className={"row"}>
 
                 <div id={"connectionStatus"} className={"col"}>
-                    {account.status && account.status != "connected" && account.status != "disconnected"?`wallet: ${account.status}`:null}
+                    {/*{account.status && account.status != "connected" && account.status != "disconnected"?`wallet: ${account.status}`:null}*/}
+                    {account.status}
                 </div>
 
                 <div id={"connectionChainName"} className={"col"}>
@@ -40,6 +41,7 @@ const ConnectionInfo = ()=>{
                             {account.connector.name}{":"}{truncateAddress(account.address)}
                         </button>
                     </div>:
+
                     connectors.map(connector => (
                         <div key={connector.id} className={"col"}>
                             <button
@@ -52,6 +54,7 @@ const ConnectionInfo = ()=>{
                             </button>
                         </div>
                     ))
+
                 }
                 </div>
 

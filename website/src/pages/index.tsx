@@ -9,6 +9,7 @@ import Heading from '@theme/Heading';
 import styles from './index.module.css';
 import ConnectButtons from "@site/src/components/wagmi/ConnectButtons";
 import ConnectionInfo from "@site/src/components/wagmi/ConnectionInfo";
+import ChainSwitcher from "@site/src/components/wagmi/ChainSwitcher";
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -41,14 +42,26 @@ export default function Home(): ReactNode {
         <div>
             <div title={"Our UI elements to test"}>Our elements</div>
             <hr/>
+            <div>
+                <button className="button button--outline" style={{background:"transparent"}}>Outline</button>
+                <button className="button button--outline button--primary">Primary</button>
+                <button className="button button--outline button--secondary">Secondary</button>
+                <button className="button button--outline button--success">Success</button>
+                <button className="button button--outline button--info">Info</button>
+                <button className="button button--outline button--warning">Warning</button>
+                <button className="button button--outline button--danger">Danger</button>
+            </div>
+            <hr/>
+            <ChainSwitcher/>
+            <hr/>
             <ConnectionInfo/>
             <hr/>
             <br/>
             <ConnectButtons/>
         </div>
-      <main>
-        <HomepageFeatures />
-      </main>
+        <main>
+            <HomepageFeatures/>
+        </main>
     </Layout>
   );
 }
