@@ -20,12 +20,26 @@ function HomepageHeader() {
           {siteConfig.title}
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
+        {/*<div className={styles.buttons}>*/}
+        {/*  <Link*/}
+        {/*    className="button button--secondary button--lg"*/}
+        {/*    to="/docs/intro">*/}
+        {/*    Docusaurus Tutorial - 5min ⏱️*/}
+        {/*  </Link>*/}
+        {/*</div>*/}
         <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
-          </Link>
+            <Link
+                style={{margin:"0.5rem"}}
+                className="button button--secondary button--lg"
+                to="/docs/intro">
+                Buy
+            </Link>
+            <Link
+                style={{margin:"0.5rem"}}
+                className="button button--secondary button--lg"
+                to="/docs/intro">
+                Manage
+            </Link>
         </div>
       </div>
     </header>
