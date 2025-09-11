@@ -16,8 +16,7 @@ npm init -y
 
 ## =========== Hardhat
 
-mkdir -p smart-contracts
-cd ./smart-contracts
+mkdir -p smart-contracts && cd "$_" || exit
 
 # https://hardhat.org/docs/getting-started#installation
 npx hardhat --init
@@ -35,6 +34,11 @@ cd ./website
 
 # https://wagmi.sh/react/getting-started#manual-installation
 npm install wagmi viem@2.x @tanstack/react-query
+
+# Wagmi CLI
+# https://wagmi.sh/cli/why
+# https://wagmi.sh/cli/installation
+npm install @wagmi/cli
 
 # create Wagmi config
 # https://wagmi.sh/react/getting-started#create-config
