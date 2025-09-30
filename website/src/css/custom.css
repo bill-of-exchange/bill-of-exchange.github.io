@@ -58,5 +58,6 @@
 }
 
 html[data-theme='dark'] {
-    --ifm-background-color: #292929; /* Replace with your desired color, e.g., a softer dark gray */
+    --ifm-background-color: #292929;  /* dark gray base */
+    --ifm-background-surface-color: #313131; /* slightly lighter for surfaces */
 }
