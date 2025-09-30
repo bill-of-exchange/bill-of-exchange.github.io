@@ -56,3 +56,7 @@
     grid-template-columns: 1fr;
     gap: .5rem;
 }
+
+html[data-theme='dark'] {
+    --ifm-background-color: #292929; /* Replace with your desired color, e.g., a softer dark gray */
+}
