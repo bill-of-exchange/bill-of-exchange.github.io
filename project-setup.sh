@@ -35,14 +35,15 @@ cd ./website
 # https://wagmi.sh/react/getting-started#manual-installation
 npm install wagmi viem@2.x @tanstack/react-query
 
+# create Wagmi config
+# https://wagmi.sh/react/getting-started#create-config
+# https://wagmi.sh/react/typescript
+touch ./src/wagmiConfig.ts
+
 # Wagmi CLI
 # https://wagmi.sh/cli/why
 # https://wagmi.sh/cli/installation
-npm install @wagmi/cli
-
-# create Wagmi config
-# https://wagmi.sh/react/getting-started#create-config
-touch ./src/wagmiConfig.ts
+npm install --save-dev @wagmi/cli
 
 # ======= Docusaurus swizzling
 # https://docusaurus.io/docs/swizzling

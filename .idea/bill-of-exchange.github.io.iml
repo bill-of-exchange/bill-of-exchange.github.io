@@ -7,6 +7,9 @@
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dictionaries" />
+      <excludeFolder url="file://$MODULE_DIR$/smart-contracts/artifacts" />
+      <excludeFolder url="file://$MODULE_DIR$/smart-contracts/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/website/.docusaurus" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

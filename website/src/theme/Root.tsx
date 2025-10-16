@@ -1,21 +1,25 @@
+import type {PropsWithChildren} from 'react';
 import React from 'react';
 import {WagmiProvider} from 'wagmi';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {wagmiConfig} from '../wagmiConfig';
+import {config} from '../wagmiConfig';
 
 const queryClient = new QueryClient();
 
-export default function Root({children}) {
+// Wrapping your Docusaurus site with <Root>
+// https://docusaurus.io/docs/swizzling#wrapper-your-site-with-root
+//
+export default function Root({ children }: PropsWithChildren) {
     return (
         <WagmiProvider
-            config={wagmiConfig}
-            //
+            config={config}
             // https://wagmi.sh/react/api/WagmiProvider#reconnectonmount
             reconnectOnMount={true}
         >
             <QueryClientProvider client={queryClient}>
                 {children}
             </QueryClientProvider>
+
         </WagmiProvider>
     );
 }

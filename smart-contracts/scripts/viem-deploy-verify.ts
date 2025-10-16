@@ -1,6 +1,9 @@
 // for verification to work, if you use Hardhat Runtime Environment (hre) object in verifyContract function:
 // you can’t switch networks from inside the script. Pick Sepolia when you invoke the script
+//
 // npx hardhat run scripts/viem-deploy-verify.ts --network sepolia
+// - creates ./artifacts and ./cache folders
+//
 // npx hardhat verify --network sepolia 0x... $ETH_DEV_ADDRESS
 
 import {WaitForTransactionReceiptParameters} from 'viem';
@@ -63,6 +66,7 @@ const main = async ()=>{
     const jsonData = {
         contractName: contractName,
         chainName: chainName,
+        chainId: publicClient.chain.id,
         contractAddress: contractAddress,
         deploymentTx: txHash,
         time: new Date().toISOString()

@@ -24,7 +24,7 @@ const ConnectionInfo = ()=>{
                 </div>
 
                 <div id={"connectionChainName"} className={"col"}>
-                    {account.isConnected?`chain: ${account.chain.name}`:null}
+                    {account.isConnected?`chain: ${account?.chain?.name}`:null}
                 </div>
 
                 <div id={"connectedAddress"} className={"col"}>
@@ -38,7 +38,7 @@ const ConnectionInfo = ()=>{
                             onClick={()=>disconnect()}
                             title={"Click to disconnect"}
                         >
-                            {account.connector.name}{":"}{truncateAddress(account.address)}
+                            {account?.connector?.name}{":"}{truncateAddress(account.address)}
                         </button>
                     </div>:
 
@@ -48,9 +48,10 @@ const ConnectionInfo = ()=>{
                                className={"button button--secondary"}
                                 // disabled={!connector.ready}
                                 onClick={() => connect({connector})}
-                                title={connector.ready ? `Click to connect ${connector.name}` : `${connector.name} is not ready`}
+
+                                title={connector.name ? `Click to connect ${connector.name}` : `${connector.name} is not ready`}
                             >
-                                Connect {connector?.name}
+                                Connect: [{connector?.name}]
                             </button>
                         </div>
                     ))
