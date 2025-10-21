@@ -31,16 +31,16 @@ export default function ConnectButtons() {
             // </div>
 
             <div className="dropdown dropdown--hoverable nav-web3">
-                <button className="button button--success">{account.connector.name}{":"}{truncateAddress(account.address)}</button>
+                <button className="button button--success">{account.connector?.name}{":"}{truncateAddress(account.address)}</button>
                 <ul className="dropdown__menu">
                     <li>
                         <a
                             className="dropdown__link pointerOnHover"
                             // href="#"
                             onClick={()=>disconnect()}
-                            title={`Click to disconnect ${account.connector.name}`}
+                            title={`Click to disconnect ${account.connector?.name}`}
                         >
-                            Disconnect {account.connector.name}
+                            Disconnect {account.connector?.name}
                         </a>
                     </li>
                 </ul>
@@ -52,7 +52,8 @@ export default function ConnectButtons() {
         <>
             {connect.connectors.map(connector => (
                 <button
-                    className={"button button--outline button--warning nav-web3"}
+                    // className={"button button--outline button--warning nav-web3"}
+                    className={"button button--primary nav-web3"}
                     key={connector.id}
                     onClick={
                         () => {

@@ -1,6 +1,8 @@
 // src/components/ChainSwitcher.tsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useAccount, useSwitchChain} from 'wagmi';
+import {mainnet, sepolia} from '@wagmi/core/chains';
+import {mode} from '../../constants';
 
 const ChainSwitcher: React.FC = () => {
 
@@ -8,12 +10,15 @@ const ChainSwitcher: React.FC = () => {
 
     const account = useAccount();
 
-    if (!account.isConnected) return null;
+    if (!account || !account.isConnected) {
+        // console.log('no account connected');
+        return null;
+    }
 
     return (
         <div className="dropdown dropdown--hoverable nav-web3">
             <button className="button button--success" title={"Switch chain"}>
-                {account.chain.name}
+                {account.chain?.name}
             </button>
             <ul className="dropdown__menu">
                 {chains.map((chain) => (

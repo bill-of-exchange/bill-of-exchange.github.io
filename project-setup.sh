@@ -33,7 +33,12 @@ npx create-docusaurus@latest ./website classic --typescript
 cd ./website
 
 # https://wagmi.sh/react/getting-started#manual-installation
+# https://www.npmjs.com/package/wagmi
+# https://www.npmjs.com/package/viem
 npm install wagmi viem@2.x @tanstack/react-query
+
+# if "Module not found: Error: Can't resolve '@react-native-async-storage/async-storage'
+npm install @react-native-async-storage/async-storage
 
 # create Wagmi config
 # https://wagmi.sh/react/getting-started#create-config

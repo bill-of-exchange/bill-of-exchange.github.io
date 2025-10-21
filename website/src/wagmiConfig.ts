@@ -18,8 +18,6 @@ declare module 'wagmi' {
 // export const chains:readonly [Chain, ...Chain[]] = [mainnet, sepolia]; //
 // (2) Guarantees exactly two chains and immutability.
 export const chains: readonly [Chain, Chain] = [mainnet, sepolia];
-// (3)
-
 
 export const config = createConfig({
     chains: chains,
