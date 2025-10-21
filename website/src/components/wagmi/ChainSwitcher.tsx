@@ -10,8 +10,8 @@ const ChainSwitcher: React.FC = () => {
 
     const account = useAccount();
 
-    if (!account) {
-        // console.log('no account connected');
+    if (!account || !account.isConnected) {
+        console.log('no account connected');
         return null;
     }
 
