@@ -1,6 +1,7 @@
 import {createConfig, http} from 'wagmi';
 import {Chain, mainnet, sepolia} from 'wagmi/chains';
 import {metaMask} from '@wagmi/connectors';
+import {mode} from './constants';
 
 // https://wagmi.sh/react/typescript#declaration-merging
 declare module 'wagmi' {
@@ -17,7 +18,10 @@ declare module 'wagmi' {
 // (1) Guarantees non-empty (at least one chain) and immutability. Flexible length (you can add more chains without changing the type).
 // export const chains:readonly [Chain, ...Chain[]] = [mainnet, sepolia]; //
 // (2) Guarantees exactly two chains and immutability.
-export const chains: readonly [Chain, Chain] = [mainnet, sepolia];
+// (3) order matters: wagmi’s default chain is the first in this array
+export const chains: readonly [Chain, Chain] = mode === 'production'
+    ? [mainnet, sepolia]   // default = mainnet
+    : [sepolia, mainnet]   // default = sepolia
 
 export const config = createConfig({
     chains: chains,
