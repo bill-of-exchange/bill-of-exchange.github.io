@@ -5,8 +5,8 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
-
 import styles from './index.module.css';
+//
 import ConnectButtons from "@site/src/components/wagmi/ConnectButtons";
 import ConnectionInfo from "@site/src/components/wagmi/ConnectionInfo";
 import ChainSwitcher from "@site/src/components/wagmi/ChainSwitcher";
@@ -19,7 +19,7 @@ function HomepageHeader() {
     const {siteConfig} = useDocusaurusContext();
 
     const description:string|undefined = useReadBillsOfExchangeDescription()?.data?.toString();
-    console.log(description);
+    // console.log(description);
 
     return (
         <header className={clsx('hero hero--primary', styles.heroBanner)}>
@@ -45,7 +45,7 @@ function HomepageHeader() {
                     <Link
                         style={{margin:"0.5rem"}}
                         className="button button--secondary button--lg"
-                        to="/docs/intro">
+                        to="/manage/">
                         Manage
                     </Link>
                 </div>
@@ -58,7 +58,7 @@ export default function Home(): ReactNode {
     const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
-            title={`Hello from ${siteConfig.title}`}
+            title={`${siteConfig.title}`}
             description="Description will go into a meta tag in <head />">
             <HomepageHeader />
             <div>

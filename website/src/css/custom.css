@@ -47,17 +47,24 @@
     /* here >>> */
     margin-top: 0.3rem !important;
 }
-.navbar-sidebar .nav-web3 .button {
 
+.navbar-sidebar .nav-web3 .button {
     width: 90%;
 }
+
 .navbar-sidebar .nav-web3 > div {
     display: grid;
     grid-template-columns: 1fr;
     gap: .5rem;
 }
 
+html {
+    --ifm-background-color: #fafafa;
+    /*--ifm-background-surface-color: #cdcdcd; !* background of: cards,  *!*/
+}
+
 html[data-theme='dark'] {
-    --ifm-background-color: #292929;  /* dark gray base */
+    /*--ifm-background-color: #292929;  !* dark gray base *!*/
+    --ifm-background-color: #212121;  /* dark gray base */
     --ifm-background-surface-color: #313131; /* slightly lighter for surfaces */
 }

@@ -19,9 +19,12 @@ declare module 'wagmi' {
 // export const chains:readonly [Chain, ...Chain[]] = [mainnet, sepolia]; //
 // (2) Guarantees exactly two chains and immutability.
 // (3) order matters: wagmi’s default chain is the first in this array
+//
 export const chains: readonly [Chain, Chain] = mode === 'production'
     ? [mainnet, sepolia]   // default = mainnet
     : [sepolia, mainnet]   // default = sepolia
+// or for dev only:
+// export const chains:readonly [Chain] = [sepolia]
 
 export const config = createConfig({
     chains: chains,

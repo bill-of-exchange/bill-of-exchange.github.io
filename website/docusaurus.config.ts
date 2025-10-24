@@ -20,6 +20,9 @@ const config: Config = {
     // For GitHub pages deployment, it is often '/<projectName>/'
     baseUrl: '/',
 
+    // https://docusaurus.io/docs/api/docusaurus-config#trailingSlash
+    trailingSlash: true, // ← ensure all pages use trailing slash
+
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
     organizationName: 'bill-of-exchange', // Usually your GitHub org/username.
@@ -80,7 +83,7 @@ const config: Config = {
         colorMode: {
             defaultMode: 'dark', // 'light',
             disableSwitch: false,
-            respectPrefersColorScheme: true, // false,
+            respectPrefersColorScheme: false, // false,
         },
         navbar: {
             title: 'Bills of Exchange',
@@ -89,6 +92,7 @@ const config: Config = {
                 src: 'img/logo_teal.svg',
             },
             items: [
+                {to: '/manage', label: 'Manage', position: 'left'},
                 {
                     type: 'docSidebar',
                     sidebarId: 'tutorialSidebar',
@@ -116,7 +120,7 @@ const config: Config = {
                     items: [
                         {
                             label: 'Docs',
-                            to: '/docs/intro',
+                            to: '/docs/intro/',
                         },
                         {
                             label: 'GitHub',
@@ -153,9 +157,12 @@ const config: Config = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Viktor Ageyev`,
         },
+        // https://docusaurus.io/docs/markdown-features/code-blocks#theming
         prism: {
-            theme: prismThemes.github,
-            darkTheme: prismThemes.dracula,
+            // theme: prismThemes.github,
+            theme: prismThemes.gruvboxMaterialLight,
+            // darkTheme: prismThemes.dracula,
+            darkTheme: prismThemes.gruvboxMaterialDark,
         },
     } satisfies Preset.ThemeConfig,
 };
