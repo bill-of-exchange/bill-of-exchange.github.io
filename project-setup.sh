@@ -65,3 +65,15 @@ mkdir -p ./src/theme && touch ./src/theme/Root.tsx
 
 npm run swizzle @docusaurus/theme-classic Navbar/Content -- --wrap
 npm run swizzle @docusaurus/theme-classic Footer -- --eject
+
+# Fontawesome
+# see: https://docusaurus.community/knowledge/design/icons/fontawesome/
+#
+# https://fontawesome.com/docs/web/use-with/react/
+# https://fontawesome.com/docs/web/use-with/react/style
+#
+# https://fontawesome.com/search?f=classic&s=solid&ic=free&o=r (1,407 Icons)
+# https://fontawesome.com/search?f=classic&s=regular&ic=free&o=r (169 icons)
+# https://fontawesome.com/search?p=3&ip=brands&ic=free&o=r (513 Icons)
+npm install --save @fortawesome/react-fontawesome@latest @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/free-brands-svg-icons
+

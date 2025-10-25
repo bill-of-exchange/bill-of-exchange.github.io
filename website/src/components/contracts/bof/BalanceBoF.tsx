@@ -4,10 +4,14 @@ import {type Address, formatUnits} from "viem";
 import {useReadBillsOfExchangeDescription,useReadBillsOfExchangeBalanceOf} from "../../../generated";
 import {blockchainExplorer, DeployedChainId, deployments} from "@site/src/constants";
 import {chains} from "@site/src/wagmiConfig";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faCircleNotch} from '@fortawesome/free-solid-svg-icons';
 
 export default function BalanceBof(){
 
-    const { address, chain, chainId, status } = useAccount();
+    // const { address, chain, chainId, status,isConnected,connector } = useAccount();
+    // console.log("isConnected:", isConnected);
+    // console.log("connector:", connector);
 
     const [addressForRequest, setAddressForRequest] = useState<string>("");
     const [lastCheckedAddress, setLastCheckedAddress] = useState<string>("");
@@ -63,10 +67,11 @@ export default function BalanceBof(){
                                         Address to Check Balance:<br/>
                                         <input
                                             width={"10rem"}
-                                            type="text"
+                                            type={"text"}
                                             value={addressForRequest}
                                             onChange={(e) => setAddressForRequest(e.target.value)}
-                                            placeholder="0x..."
+                                            placeholder={"0x..."}
+                                            autoComplete={"on"}
                                             style={{ width: '80%', fontSize: '1rem' }}
                                         />
                                         <button
@@ -84,7 +89,7 @@ export default function BalanceBof(){
                                         onClick={handleClick}
                                         disabled={isWorking}
                                 >
-                                    Get/refresh
+                                    {isWorking ? <FontAwesomeIcon icon={faCircleNotch} spin /> : "Get/refresh"}
                                 </button>
                             </div>
 
