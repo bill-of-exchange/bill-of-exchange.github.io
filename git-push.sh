@@ -20,6 +20,8 @@ git config --local user.email "$GIT_USER_EMAIL";
 
 #npm run-script build && git add ./build && git commit -a -m "run build script"
 
+npm run -w website build && git add ./website/build git commit -a -m "run build script"
+
 ssh-add -D
 
 ssh-add "${GITHUB_KEY_PATH}";
