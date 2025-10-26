@@ -1,0 +1,28 @@
+
+@media screen and (max-width: 768px) {
+    .BlockexplorerLinks.pagination-nav {
+        flex-direction: column !important;
+        gap: 1rem;
+    }
+
+    .BlockexplorerLinks .pagination-nav__link {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .BlockexplorerLinks .avatar__photo {
+        width: 3rem !important;
+        height: 3rem !important;
+    // display: none;
+    }
+
+    .BlockexplorerLinks .avatar__name {
+        font-size: 0.9rem !important;
+    }
+
+    .BlockexplorerLinks .avatar__subtitle {
+        font-size: 0.75rem !important;
+        word-break: break-all;
+        display: none;
+    }
+}

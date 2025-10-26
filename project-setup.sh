@@ -77,3 +77,7 @@ npm run swizzle @docusaurus/theme-classic Footer -- --eject
 # https://fontawesome.com/search?p=3&ip=brands&ic=free&o=r (513 Icons)
 npm install --save @fortawesome/react-fontawesome@latest @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/free-brands-svg-icons
 
+# clsx (included in Docusaurus)
+# https://www.npmjs.com/package/clsx
+# https://github.com/lukeed/clsx
+npm install --save clsx

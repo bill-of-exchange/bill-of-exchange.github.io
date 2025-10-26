@@ -3,6 +3,7 @@ import {useAccount} from 'wagmi';
 import {blockchainExplorer, ContractName, DeployedChainId, deployments} from "@site/src/constants";
 import {chains} from "@site/src/wagmiConfig";
 import {useColorMode} from '@docusaurus/theme-common';
+import styles from "@site/src/components/contracts/ContractOnExplorers.module.css";
 
 type ContractOnExplorersProps = {
     contractName: ContractName;
@@ -76,64 +77,56 @@ export default function ContractOnExplorers(props: ContractOnExplorersProps){
                 }
             `}</style>
 
-            <div className="container">
-                <div className="row">
-                    <div className="col col--12">
-                        <div className="card">
-                            {/*<div className="card__header">*/}
-                            {/*    <h3>open on blockchain explorers</h3>*/}
-                            {/*</div>*/}
-                            <div className="card__body">
+            <div className="card">
+                {/*<div className="card__header">*/}
+                {/*    <h3>open on blockchain explorers</h3>*/}
+                {/*</div>*/}
+                <div className="card__body">
 
-                                <nav className="BlockexplorerLinks pagination-nav docusaurus-mt-lg" style={{marginTop: 0}}>
+                    <nav className="BlockexplorerLinks pagination-nav docusaurus-mt-lg" style={{marginTop: 0}}>
 
-                                    <a className="EtherscanLink pagination-nav__link pagination-nav__link--prev"
-                                       href={etherscanLink}
-                                       target={"_blank"}
-                                       rel={"noreferrer noopener"}
-                                       title={"Click to open on Etherscan"}
-                                    >
-                                        <div className="avatar">
-                                            <img className="avatar__photo" src={etherscanLogo} alt="Etherscan logo"/>
-                                            <div className="avatar__intro">
-                                                <div className="avatar__name">
-                                                    Open on Etherscan
-                                                </div>
-                                                <small className="avatar__subtitle">
-                                                    {contractAddress}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </a>
-
-                                    <a className="BlockscoutLink pagination-nav__link pagination-nav__link--next"
-                                       href={blockscoutLink}
-                                       target={"_blank"}
-                                       rel={"noreferrer noopener"}
-                                       title={"Click to open on Blockscout"}
-                                    >
-                                        <div className="avatar">
-                                            <div className="avatar__intro">
-                                                <div className="avatar__name">
-                                                    Open on Blockscout
-                                                </div>
-                                                <small className="avatar__subtitle">
-                                                    {contractAddress}
-                                                </small>
-                                            </div>
-                                            <img
-                                                className="avatar__photo"
-                                                src={blockscoutLogo} alt={"Blockscout Logo"}/>
-                                        </div>
-                                    </a>
-                                </nav>
+                        <a className="EtherscanLink pagination-nav__link pagination-nav__link--prev"
+                           href={etherscanLink}
+                           target={"_blank"}
+                           rel={"noreferrer noopener"}
+                           title={"Click to open on Etherscan"}
+                        >
+                            <div className="avatar">
+                                <img className="avatar__photo" src={etherscanLogo} alt="Etherscan logo"/>
+                                <div className="avatar__intro">
+                                    <div className="avatar__name">
+                                        Open on Etherscan
+                                    </div>
+                                    <small className="avatar__subtitle">
+                                        {contractAddress}
+                                    </small>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </a>
+
+                        <a className="BlockscoutLink pagination-nav__link pagination-nav__link--next"
+                           href={blockscoutLink}
+                           target={"_blank"}
+                           rel={"noreferrer noopener"}
+                           title={"Click to open on Blockscout"}
+                        >
+                            <div className="avatar">
+                                <div className="avatar__intro">
+                                    <div className="avatar__name">
+                                        Open on Blockscout
+                                    </div>
+                                    <small className="avatar__subtitle">
+                                        {contractAddress}
+                                    </small>
+                                </div>
+                                <img
+                                    className="avatar__photo"
+                                    src={blockscoutLogo} alt={"Blockscout Logo"}/>
+                            </div>
+                        </a>
+                    </nav>
                 </div>
             </div>
-
-
         </div>
     )
 }
