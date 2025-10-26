@@ -84,6 +84,7 @@ export default function BalanceBof(){
                         {balance!=="no data"?<FontAwesomeIcon icon={currencySymbol} />:null}
                     </div>
                     <input
+                        name={"ethAddress"}
                         width={"10rem"}
                         type={"text"}
                         value={addressForRequest}

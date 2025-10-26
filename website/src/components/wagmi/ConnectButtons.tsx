@@ -15,6 +15,12 @@ export default function ConnectButtons() {
     const { disconnect } = useDisconnect();
 
     if (account.isConnected) {
+
+        // if(account.connector?.name=="MetaMask"){
+        //     console.log("connector:", account.connector.name);
+        //     account.connector.getProvider();
+        // }
+
         return (
             <div className={"ConnectButtons"}>
                 <div className="dropdown dropdown--hoverable nav-web3">
@@ -33,29 +39,33 @@ export default function ConnectButtons() {
                 </div>
             </div>
         );
-    }
-
-    return (
+    } else return (
         <div className={"ConnectButtons"}>
 
-            {connect.connectors.map(connector => (
-                <button
-                    // className={"button button--outline button--warning nav-web3"}
-                    className={"button button--primary nav-web3"}
-                    key={connector.id}
-                    onClick={
-                        () => {
-                            connect.connect({connector});
-                            if (connect.error) {
-                                console.error(connect.error);
-                            }
-                        }
-                    }
-                    title={`Click to connect ${connector.name}`}
-                >
-                    Connect {connector.name}
-                </button>
-            ))}
+            {
+                connect.connectors.map(connector => {
+                    return (
+                        (
+                            <button
+                                // className={"button button--outline button--warning nav-web3"}
+                                className={"button button--primary nav-web3"}
+                                key={connector.id}
+                                onClick={
+                                    () => {
+                                        connect.connect({connector});
+                                        if (connect.error) {
+                                            console.error(connect.error);
+                                        }
+                                    }
+                                }
+                                title={`Click to connect ${connector.name}`}
+                            >
+                                Connect {connector.name}
+                            </button>
+                        )
+                    )
+                })
+            }
 
         </div>
     );
