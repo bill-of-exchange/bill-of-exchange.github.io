@@ -3,7 +3,7 @@ import React from 'react';
 import {useAccount, useSwitchChain} from 'wagmi';
 import {mode} from '../../constants';
 
-const ChainSwitcher: React.FC = () => {
+export default function ChainSwitcher (){
 
     const {chains, switchChain} = useSwitchChain()
 
@@ -41,6 +41,4 @@ const ChainSwitcher: React.FC = () => {
             </div>
         </div>
     );
-};
-
-export default ChainSwitcher;
+}

@@ -1,4 +1,6 @@
 import React from "react";
+// https://docusaurus.io/docs/advanced/ssg#browseronly
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import DescriptionBoF from "@site/src/components/contracts/bof/DescriptionBoF";
 import ContractOnExplorers from "@site/src/components/contracts/ContractOnExplorers";
 import BalanceBof from "@site/src/components/contracts/bof/BalanceBoF";
@@ -39,6 +41,9 @@ export default function BillsOfExchangeContract() {
 
                 <div className="col col--6">
                     <TransferBoF/>
+                    {/*<BrowserOnly fallback={<div>Loading …</div>}>*/}
+                    {/*    {() => <TransferBoF />}*/}
+                    {/*</BrowserOnly>*/}
                 </div>
 
                 <div className="col col--6">
