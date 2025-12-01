@@ -18,7 +18,7 @@ git config --local user.email "$GIT_USER_EMAIL";
 
 #docusaurus clear
 
-#npm run -w website build && git add ./website/build && git commit -a -m "run build script"
+npm run -w website build && git add ./website/build && git commit -a -m "run build script"
 
 ssh-add -D
 
