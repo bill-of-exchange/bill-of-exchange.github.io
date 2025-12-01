@@ -1,187 +1,264 @@
 // TransferBoF.tsx
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
 import {type Address, type Abi, erc20Abi, parseUnits, isAddress} from "viem";
-import {blockchainExplorer, ContractName, DeployedChainId, deployments} from "@site/src/constants";
+import clsx from "clsx";
+import {
+    blockchainExplorerUrl,
+    ContractName,
+    DeployedChainId,
+    deployments,
+    currencySymbolSVG,
+    currencySymbolString, defaultBlockchainExplorer
+} from "@site/src/constants";
 import {useAccount, useConnect, useWaitForTransactionReceipt, useWriteContract} from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import {useWriteBillsOfExchangeTransfer, billsOfExchangeAbi} from "../../../generated";
 // import {abi} from "./BillsOfExchange.json";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch} from '@fortawesome/free-solid-svg-icons';
+import {AlertType} from "@site/src/components/ui/InfimaAlert";
+import {TOKEN_DECIMALS} from "@site/src/constants";
+import CurrencyInput, {CurrencyInputOnChangeValues} from 'react-currency-input-field';
+import CopyIcon from "@site/src/components/ui/CopyIcon";
 
 export default function TransferBoF() {
 
-    const { connect, isPending: isConnecting } = useConnect();
-
-    function requestConnect() {
-        // Triggers MetaMask popup (connect or unlock)
-        connect({ connector: injected()});
-    }
-
-    const TOKEN_DECIMALS = 18; // TODO: read from contract
-
     const account = useAccount();
-    // console.log("account", account);
 
     const [isWorking, setIsWorking] = useState<boolean>(false);
 
-    const [toAddress, setToAddress] = useState<Address|undefined>(undefined);
+    const [toAddress, setToAddress] = useState<Address>();
     const [amountToTransfer, setAmountToTransfer] = useState<number>(0);
     const [buttonText, setButtonText] = useState<string>("Transfer");
+    const [txStatus, setTxStatus] = useState<string>("");
+    const [inputAddressValidated, setInputAddressValidated] = useState<boolean|undefined>(undefined);
+    const [validationMessage, setValidationMessage] = useState<string>("Input ETH address");
+    const [clearStatus, setClearStatus] = useState<boolean>(true);
 
-    // const { data: decimals } = useReadBillsOfExchangeDecimals();
-    // console.log(decimals);
-
-    // const {
-    //     writeContract:transfer,
-    //     data: hash,               // tx hash after submit
-    //     isPending,                // waiting for wallet/user confirmation
-    //     error: writeError,
-    //     reset: resetWrite,
-    // } = useWriteBillsOfExchangeTransfer();
-
-    // const transfer = useWriteBillsOfExchangeTransfer();
-    // console.log(transfer.variables);
-
-    // const hash = transfer.data;
-
-    // const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    //     useWaitForTransactionReceipt({hash});
-
+    // Wraps useWriteContract with abi set to billsOfExchangeAbi and functionName set to "transfer"
+    // useWriteContract:
     // https://wagmi.sh/react/api/hooks/useWriteContract
-    // const { writeContract, data: txHah, status,error, } = useWriteContract();
-    const { writeContract, data: txHash, isPending: writePending, error: writeError, reset: resetWrite } = useWriteContract();
+    // Return Type: { type UseWriteContractReturnType } from 'wagmi'
+    const {
+        writeContract:transfer,
+        status, // https://wagmi.sh/react/api/hooks/useWriteContract#status
+        data: txHash,  // undefined, tx hash after submit
+        isPending,     // waiting for wallet/user confirmation
+        isSuccess,
+        isError,
+        error: writeError,
+        reset: resetWrite,
+    } = useWriteBillsOfExchangeTransfer();
 
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash });
+    const txReceipt = useWaitForTransactionReceipt({hash:txHash});
 
-    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const onValueChange = (value: string | undefined, name?: string | undefined, values?: CurrencyInputOnChangeValues | undefined) => {
+        if(values&&values.float&&values.float>=0){
+            setAmountToTransfer(values.float*10);
+        }
+    };
+
+    const onAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.trim();
-        if(value&&isAddress(value)){ // < check if value is a valid ETH address
+        if (value.length==0){
+            setInputAddressValidated(undefined);
+            setValidationMessage("Input ETH address");
+        } else if (isAddress(value, {strict: false})){
+            setInputAddressValidated(true);
+            setValidationMessage("Valid address");
             setToAddress(value as Address);
+        } else {
+            setInputAddressValidated(false);
+            setValidationMessage("Not a valid ETH address");
+        }
+    };
+
+    const handleTransfer = async (event: React.FormEvent) => {
+        event.preventDefault();
+        setIsWorking(true);
+
+        try {
+
+            // (!important) always check if args and other options values are valid, if not it will not trigger transaction
+            if(!toAddress||!isAddress){
+                console.error("toAddress invalid:",toAddress);
+                return;
+            }
+
+            setClearStatus(false);
+            const value = BigInt(amountToTransfer) as bigint;
+            const transferOptions = {
+                args: [
+                    toAddress as Address,
+                    value as bigint,
+                ]
+            } as const;
+
+            resetWrite();
+            transfer(transferOptions);
+
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsWorking(false);
+            if(txHash){
+                console.log("txHash:", txHash);
+            }
         }
     }
 
-    const handleClick = async (event: React.FormEvent) => {
-        event.preventDefault();
-
-        console.log("handleClick triggered");
-
-        // requestConnect();
-        if (!account.isConnected) {
-            // If not, just request connection and stop.
-            requestConnect();
-            return;
-        }
-
-        let amountAsBigInt: bigint;
-        try {
-            // Parse the human-readable amount (e.g., "0.5") into the token's base units
-            amountAsBigInt = parseUnits(amountToTransfer.toString() as `${number}`, TOKEN_DECIMALS);
-            if (amountAsBigInt < 0) throw new Error("Amount must be greater than 0");
-        } catch (e) {
-            console.error(e);
-            alert("Please enter a valid amount.");
-            return;
-        }
-
-        // // call generated write hook
-        // try {
-        //     // resetWrite();
-        //     transfer.writeContract({
-        //         args: [toAddress as Address, BigInt(amountToTransfer)]
-        //     });
-        // } catch (e) {
-        //     console.error(e);
-        // }
-        // console.log(hash);
-
-        resetWrite();
-        // writeContract({ address, abi, functionName: functionName as any, //// @ts-expect-error variadic
-        //     args: parsedArgs })
-
-        const contractAddress=deployments.BillsOfExchange[account.chainId as DeployedChainId];
-        console.log("contractAddress", contractAddress);
-
-
-        if(!toAddress||!isAddress(toAddress)){
-            console.error(toAddress, "is wrong address to transfer to");
-        }
-
-        // TODO: (!important) always check if args and other options values are valid, if not it will not trigger transaction
-        const writeContractOptions = {
-            address:contractAddress as Address,
-            abi: erc20Abi,
-            functionName: "transfer", //// @ts-expect-error variadic
-            args: [
-                toAddress as `0x${string}`, // TODO: (!) check if string is a valid address
-                amountAsBigInt,
-            ]
-        } as const;
-
-        console.log("writeContractOptions");
-        console.log(writeContractOptions);
-
-        writeContract(writeContractOptions);
-
-        // Determine button state and text
-        const isWorking = isConnecting || writePending || isConfirming;
-        // let buttonText = "Transfer";
-        if (!account.isConnected) setButtonText("Connect Wallet");
-        else if (writePending) setButtonText("Confirm in wallet...");
-        else if (isConfirming) setButtonText("Confirming Transaction...");
-
-        // writeContract({
-        //     abi,
-        //     address: contractAddress,
-        //     functionName: 'transfer',
-        //     args: [
-        //        toAddress,
-        //         BigInt(amountToTransfer)
-        //     ],
-        // })
-
+    const handleClearStatus = (e:React.FormEvent)=>{
+        e.preventDefault();
+        setClearStatus(true);
     }
 
     return (
-        // https://docusaurus.io/docs/advanced/ssg#browseronly
+        <div className="transferBoF row row--eq" style={{marginTop:"0.5rem", marginBottom:"0.5rem"}}>
+            <div className="col col--6">
 
-        <div className="card" >
-            <div className="card__header">
-                <h3>Transfer</h3>
-            </div>
+                <div className="card transferForm" >
+                    <div className="card__header">
+                        <h3>Transfer</h3>
+                    </div>
 
-            <div className="card__body">
-                <div>
-                    <input
-                        width={"10rem"}
-                        type={"text"}
-                        value={toAddress}
-                        onChange={handleOnChange}
-                        placeholder={"0x..."}
-                        autoComplete={"on"}
-                        style={{ width: '80%', fontSize: '1rem' }}
-                    />
+                    <div className="card__body">
+                        <div>
+                            <b>{"Amount: "}</b>
+                        </div>
+                        <div>
+                            <CurrencyInput
+                                id={"transferAmountInput"}
+                                name={"transferAmountInput"}
+                                placeholder="Please enter a number"
+                                disableGroupSeparators={true}
+                                prefix={currencySymbolString}
+                                // suffix={"₪"}
+                                defaultValue={10}
+                                decimalsLimit={2}
+                                onValueChange={onValueChange}
+                                style={{
+                                    // width: '80%',
+                                    width: '100%',
+                                    fontSize: '1rem',
+                                    // marginRight: '.1rem',
+                                }}
+                            />
+                        </div>
 
-                    <button
-                        onClick={()=>{setToAddress(undefined)}}
-                        style={{ width: '20%', fontSize: '1rem' }}
+
+                        <div>
+                            <b>{"Receiver address: "}</b>
+                        </div>
+
+                        <input
+                            // width={"10rem"}
+                            type={"text"}
+                            // value={toAddress}
+                            onChange={onAddressChange}
+                            placeholder={"0x..."}
+                            autoComplete={"on"}
+                            style={{
+                                width: '100%',
+                                fontSize: '1rem'
+                            }}
+                        />
+
+                        <div className={clsx(inputAddressValidated&&"textSuccess", inputAddressValidated===false&&"textError")}>
+                            {validationMessage}
+                        </div>
+
+                    </div>
+
+                    <div className="card__footer">
+
+                        <button className="button button--secondary button--block"
+                                onClick={handleTransfer}
+                                disabled={!toAddress||isWorking||isPending}
+                                title={""}
                         >
-                        {"clear"}
-                    </button>
+                            {isWorking||isPending ?
+                                <FontAwesomeIcon icon={faCircleNotch} spin />
+                                : buttonText
+                            }
+
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div className="col col--6">
+                <div className="card transferStatus" >
+                    <div className="card__header">
+                        <h3>Transfer status</h3>
+                    </div>
+                    <div className="card__body">
+                        <div className="row txHash">
+                            <div className="col col--4">
+                                <b>Tx hash: </b>
+                            </div>
+                            <div className="col col--8">
+                                {account.chainId&&txHash&&!clearStatus?
+                                    <span>
+                                        <a
+                                            title={`Click to view on ${defaultBlockchainExplorer}`}
+                                            target={"_blank"}
+                                            rel={"noreferrer noopener"}
+                                            href={
+                                                `${blockchainExplorerUrl[defaultBlockchainExplorer][account.chainId as DeployedChainId]}tx/${txHash}`
+                                            }>
+                                        {txHash?txHash:null}
+                                        </a>
+                                        {" "}
+                                        {txHash?<CopyIcon dataToCopy={txHash}/>:null}
+                                    </span>
+                                    :null
+                                }
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col col--4">
+                                <b>Tx status: </b>
+                            </div>
+                            <div className="col col--8">
+                                <span className={clsx(
+                                    status==="success"&&"textSuccess",
+                                    status==="error"&& "textError",
+                                )}>
+                                    {status==="success"&&!clearStatus?"✅":null}
+                                    {status==="error"&&!clearStatus?"❌":null}
+                                    {status=="pending"&&!clearStatus?"⏳":null}
+                                    {" "}
+                                    {status&&!clearStatus?status:null}
+                                </span>
+
+                            </div>
+                        </div>
+                        {
+                            writeError&&!clearStatus?
+                                <div className="row">
+                                    <div className="col col--4">
+                                        <b>Error: </b>
+                                    </div>
+                                    <div className="col col--8">
+                                        <span className={"textError"}>
+                                            {writeError.message}
+                                        </span>
+                                    </div>
+                                </div>
+                                :null
+                        }
+                    </div>
+                    <div className="card__footer">
+                        <button className="button button--secondary button--block"
+                                onClick={handleClearStatus}
+                                disabled={clearStatus}
+                                title={"Clear status"}
+                        >
+                            {"Clear"}
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <div className="card__footer">
-                <button className="button button--secondary button--block"
-                        onClick={handleClick}
-                        disabled={isWorking}
-                        title={""}
-                >
-                    {/*{isWorking ? <FontAwesomeIcon icon={faCircleNotch} spin /> : "Transfer"}*/}
-                    {buttonText}
-                </button>
-            </div>
-
         </div>
     );
 }

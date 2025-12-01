@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 import {useAccount} from 'wagmi';
-import {blockchainExplorer, ContractName, DeployedChainId, deployments} from "@site/src/constants";
+import {blockchainExplorerUrl, ContractName, DeployedChainId, deployments} from "@site/src/constants";
 import {chains} from "@site/src/wagmiConfig";
 import {useColorMode} from '@docusaurus/theme-common';
 import styles from "@site/src/components/contracts/ContractOnExplorers.module.css";
@@ -23,9 +23,9 @@ export default function ContractOnExplorers(props: ContractOnExplorersProps){
             // return default (first in the array) chain from Wagmi config
             contractAddress =  deployments[props.contractName][chains[0].id as DeployedChainId];
 
-        const blockscoutLink = `${blockchainExplorer.Blockscout[chainId as DeployedChainId]}address/${contractAddress}`;
+        const blockscoutLink = `${blockchainExplorerUrl.Blockscout[chainId as DeployedChainId]}address/${contractAddress}`;
 
-        const etherscanLink = `${blockchainExplorer.Etherscan[chainId as DeployedChainId]}address/${contractAddress}`;
+        const etherscanLink = `${blockchainExplorerUrl.Etherscan[chainId as DeployedChainId]}address/${contractAddress}`;
 
         return {contractAddress,blockscoutLink,etherscanLink};
 

@@ -1,0 +1,68 @@
+{
+  // ===== Basic editor behavior =====
+  // Use 2 spaces for indentation across the workspace
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  // Always use LF line endings (important when working across OSes)
+  "files.eol": "\n",
+
+  // Clean up trailing whitespace and ensure a final newline
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // ===== Formatting configuration =====
+  // By default, do NOT format on save globally.
+  // We will enable formatOnSave only for Solidity to avoid conflicts with WebStorm.
+  "editor.formatOnSave": false,
+
+  // For Solidity files: use Prettier and format on save
+  "[solidity]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+
+  // For TypeScript in VS Code:
+  // - Do not format on save (if WebStorm is primary TS IDE)
+  // - This prevents accidental reformatting with a different configuration.
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
+
+  // ===== Prettier configuration =====
+  // Point VS Code to the local Prettier installation from monorepo.
+  // With pnpm, this will still be the root-level node_modules shim.
+  "prettier.prettierPath": "./node_modules/prettier/index.cjs",
+
+  // Let the Solidity extension delegate formatting to Prettier
+  "solidity.formatter": "prettier",
+
+  // Default locations for Solidity dependencies in a Hardhat project
+  "solidity.packageDefaultDependenciesContractsDirectory": "contracts",
+  "solidity.packageDefaultDependenciesDirectory": "node_modules",
+
+  // ===== ESLint (optional in VS Code) =====
+  // Enable ESLint only for JS/TS so you get diagnostics in the editor.
+  // The actual fixing can still be done via CLI or WebStorm.
+  "eslint.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // ===== GitHub Copilot (inline suggestions) =====
+  // Enable Copilot for code, but disable it for plain text.
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false
+  }
+
+  // Codex configuration (model, reasoning, permissions) is managed
+  // from the Codex panel inside VS Code, not via settings.json.
+}

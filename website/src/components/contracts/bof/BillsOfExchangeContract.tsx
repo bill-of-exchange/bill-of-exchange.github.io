@@ -6,6 +6,7 @@ import ContractOnExplorers from "@site/src/components/contracts/ContractOnExplor
 import BalanceBof from "@site/src/components/contracts/bof/BalanceBoF";
 import YourBalanceBoF from "@site/src/components/contracts/bof/YourBalanceBoF";
 import TransferBoF from "@site/src/components/contracts/bof/TransferBoF";
+import TotalSupplyBoF from "@site/src/components/contracts/bof/TotalSupplyBoF";
 
 export default function BillsOfExchangeContract() {
 
@@ -27,7 +28,6 @@ export default function BillsOfExchangeContract() {
             </div>
 
             <div className="row row--eq"  style={{marginTop:"0.5rem", marginBottom:"0.5rem"}}>
-
                 <div className="col col--6">
                     <YourBalanceBoF/>
                 </div>
@@ -37,19 +37,7 @@ export default function BillsOfExchangeContract() {
                 </div>
             </div>
 
-            <div className="row row--eq"  style={{marginTop:"0.5rem", marginBottom:"0.5rem"}}>
-
-                <div className="col col--6">
-                    <TransferBoF/>
-                    {/*<BrowserOnly fallback={<div>Loading …</div>}>*/}
-                    {/*    {() => <TransferBoF />}*/}
-                    {/*</BrowserOnly>*/}
-                </div>
-
-                <div className="col col--6">
-
-                </div>
-            </div>
+            <TransferBoF/>
 
         </div>
     );

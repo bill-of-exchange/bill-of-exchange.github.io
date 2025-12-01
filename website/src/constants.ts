@@ -1,7 +1,14 @@
 import {type Address} from 'viem';
 
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCircleNotch, faShekelSign} from '@fortawesome/free-solid-svg-icons';
+
 // TODO: change in production
 export const mode:'dev' | 'production' = 'dev';
+
+export const currencySymbolSVG = faShekelSign;
+export const currencySymbolString = "₪";
+export const decimals = 18; // TODO: change
 
 export const CHAINS = [1, 11155111] as const;
 export type DeployedChainId = typeof CHAINS[number];
@@ -19,10 +26,11 @@ export const deployments = {
     }
 } as const satisfies Record<ContractName, Partial<Record<DeployedChainId, Address>>>
 
-export const ExplorerNames = ["Blockscout", "Etherscan"] as const;
-export type BlockchainExplorer = typeof ExplorerNames[number];
-
-export const blockchainExplorer = {
+// --- Blockchain explorers
+export const explorerNames = ["Blockscout", "Etherscan"] as const;
+export type BlockchainExplorer = typeof explorerNames[number];
+export const defaultBlockchainExplorer: BlockchainExplorer = explorerNames[1];
+export const blockchainExplorerUrl = {
     Blockscout: {
         1: "https://www.blockscout.com/" as string,
         11155111: "https://eth-sepolia.blockscout.com/" as string,
@@ -32,3 +40,5 @@ export const blockchainExplorer = {
         11155111: "https://sepolia.etherscan.io/" as string,
     }
 } as const satisfies Record<BlockchainExplorer, Partial<Record<DeployedChainId, string>>>
+
+export const TOKEN_DECIMALS = 2; // TODO: change if needed

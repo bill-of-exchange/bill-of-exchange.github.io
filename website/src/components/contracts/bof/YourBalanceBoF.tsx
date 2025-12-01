@@ -5,6 +5,7 @@ import {useReadBillsOfExchangeBalanceOf} from "@site/src/generated";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch, faShekelSign} from '@fortawesome/free-solid-svg-icons';
 import EthAddress from "@site/src/components/wagmi/EthAddress";
+import TotalSupplyBoF from "@site/src/components/contracts/bof/TotalSupplyBoF";
 
 const currencySymbol = faShekelSign;
 
@@ -39,12 +40,13 @@ export default function YourBalanceBoF(){
     return (
         <div className="card">
             <div className="card__header">
-                <h3>Your balance</h3>
+
 
             </div>
             <div className="card__body">
 
                 <div>
+                    <h3>Your balance</h3>
                     {address ?
                         <EthAddress ethAddress={address}/>
                         :null
@@ -57,10 +59,6 @@ export default function YourBalanceBoF(){
                     {" "}
                     {data?<FontAwesomeIcon icon={currencySymbol} />:null}
                 </div>
-
-            </div>
-
-            <div className="card__footer">
                 <button className="button button--secondary button--block"
                         onClick={handleClick}
                         disabled={isWorking}
@@ -68,8 +66,11 @@ export default function YourBalanceBoF(){
                 >
                     {isWorking ? <FontAwesomeIcon icon={faCircleNotch} spin /> : "Refresh"}
                 </button>
-            </div>
 
+                <hr/>
+                <TotalSupplyBoF/>
+
+            </div>
         </div>
     )
 }

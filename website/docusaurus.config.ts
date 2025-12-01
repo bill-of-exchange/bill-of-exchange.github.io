@@ -89,7 +89,7 @@ const config: Config = {
             title: 'Bills of Exchange',
             logo: {
                 alt: 'Logo',
-                src: 'img/logo_teal.svg',
+                src: 'img/logos/logo.svg', //
             },
             items: [
                 {to: '/manage', label: 'Manage', position: 'left'},

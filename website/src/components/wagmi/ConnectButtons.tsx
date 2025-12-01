@@ -14,17 +14,26 @@ export default function ConnectButtons() {
 
     const { disconnect } = useDisconnect();
 
+    let walletIcon:string = "";
+
     if (account.isConnected) {
 
-        // if(account.connector?.name=="MetaMask"){
-        //     console.log("connector:", account.connector.name);
-        //     account.connector.getProvider();
-        // }
+        if(account.connector?.name) {
+            if (account.connector?.name=="MetaMask"){
+                walletIcon = "🦊";
+            }
+            console.log("connector:", walletIcon, account.connector.name);
+        }
 
         return (
             <div className={"ConnectButtons"}>
                 <div className="dropdown dropdown--hoverable nav-web3">
-                    <button className="button button--primary">{account.connector?.name}{":"}{truncateAddress(account.address)}</button>
+                    <button className="button button--primary">
+                        {/*{walletIcon}*/}
+                        {account.connector?.name}
+                        {":"}
+                        {truncateAddress(account.address)}
+                    </button>
                     <ul className="dropdown__menu">
                         <li>
                             <a

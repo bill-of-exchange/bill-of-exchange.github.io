@@ -1,18 +1,19 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import clsx from "clsx";
 import {type Address, formatUnits, isAddress, zeroAddress} from "viem";
 import {useReadBillsOfExchangeBalanceOf} from "../../../generated";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch, faShekelSign} from '@fortawesome/free-solid-svg-icons';
 import EthAddress from "@site/src/components/wagmi/EthAddress";
+import {currencySymbolSVG, decimals} from "@site/src/constants";
 
-const currencySymbol = faShekelSign;
+// const currencySymbol = faShekelSign;
 
 export default function BalanceBof(){
 
-    const [addressForRequest, setAddressForRequest] = useState<string>("");
+    const [addressForRequest, setAddressForRequest] = useState<Address>(`0x${""}`);
     const [lastCheckedAddress, setLastCheckedAddress] = useState<Address>(zeroAddress);
-    const [balance, setBalance] = useState<string>("no data");
+    const [balance, setBalance] = useState<string|undefined>(undefined);`0x${"..."}`
     const [isWorking, setIsWorking] = useState<boolean>(false);
     const [inputAddressValidated, setInputAddressValidated] = useState<boolean|undefined>(undefined);
     const [validationMessage, setValidationMessage] = useState<string>("Input ETH address");
@@ -23,16 +24,15 @@ export default function BalanceBof(){
     const { data, refetch } = useReadBillsOfExchangeBalanceOf({
         args: [addressForRequest as Address],
         query: {
-            enabled: false, // Don't run automatically on mount ← key part
+            enabled: false, //
+            // enabled: true, // runs if args changed
         }
     });
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.trim();
-
-        setAddressForRequest(value);
-
-        if (value.length==0){
+        setAddressForRequest(value as Address);
+        if (value.length===0||value===`0x${""}`){
             setInputAddressValidated(undefined);
             setValidationMessage("Input ETH address");
         } else if (isAddress(value, {strict: false})){
@@ -44,20 +44,15 @@ export default function BalanceBof(){
         }
     };
 
-    const handleClick = async (event: React.FormEvent) => {
-        event.preventDefault()
-
+    const updateBalance = async () => {
         if (!addressForRequest||!inputAddressValidated) return
-
         setIsWorking(true);
-
         setLastCheckedAddress(addressForRequest as Address);
-
         try {
             const { data: raw } = await refetch();
             console.log("raw:", raw);
             // ERC-20 balances are bigint; don't `Number()` (overflow risk). Format properly:
-            const formatted = raw ? formatUnits(raw as bigint, /* token decimals, e.g. */ 18) : 'no data'
+            const formatted = formatUnits(raw as bigint, /* token decimals, e.g. */ decimals);
             setBalance(formatted);
         } catch (error) {
             console.error(error);
@@ -65,6 +60,15 @@ export default function BalanceBof(){
         finally {
             setIsWorking(false);
         }
+    };
+
+    useEffect(() => {
+        updateBalance();
+    },[])
+
+    const handleClick = async (event: React.FormEvent) => {
+        event.preventDefault()
+        updateBalance();
     }
 
     return (
@@ -77,12 +81,13 @@ export default function BalanceBof(){
                 <div>
                     {/* === Show Balance */}
                     <div>
-                            <EthAddress ethAddress={lastCheckedAddress as Address}/>
+                        <EthAddress ethAddress={lastCheckedAddress as Address}/>
                     </div>
                     <div>
-                        <b>{balance}</b>{" "}
-                        {balance!=="no data"?<FontAwesomeIcon icon={currencySymbol} />:null}
+                        {balance?balance:"no data"}
+                        {balance?<FontAwesomeIcon icon={currencySymbolSVG} />:null}
                     </div>
+
                     <input
                         name={"ethAddress"}
                         width={"10rem"}
@@ -95,14 +100,16 @@ export default function BalanceBof(){
                     />
 
                     <button
-                        onClick={(e)=>setAddressForRequest("")}
+                        onClick={(e)=>setAddressForRequest(`0x${""}`)}
                         style={{ width: '20%', fontSize: '1rem' }}
                     >
                         clear
                     </button>
+
                     <div className={clsx(inputAddressValidated&&"textSuccess", inputAddressValidated===false&&"textError")}>
                         {validationMessage}
                     </div>
+
                 </div>
             </div>
 

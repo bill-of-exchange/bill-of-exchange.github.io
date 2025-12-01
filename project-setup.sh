@@ -30,6 +30,7 @@ npm install @openzeppelin/contracts
 ## =========== Docusaurus
 
 npx create-docusaurus@latest ./website classic --typescript
+
 cd ./website
 
 # https://wagmi.sh/react/getting-started#manual-installation
@@ -81,3 +82,7 @@ npm install --save @fortawesome/react-fontawesome@latest @fortawesome/fontawesom
 # https://www.npmjs.com/package/clsx
 # https://github.com/lukeed/clsx
 npm install --save clsx
+
+# react-currency-input-field
+# https://www.npmjs.com/package/react-currency-input-field
+npm install --save react-currency-input-field
