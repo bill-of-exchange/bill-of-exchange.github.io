@@ -8,14 +8,13 @@ sidebar_position: 1
 
 [Cryptonomica: electronic bills of exchange](https://github.com/Cryptonomica/cryptonomica/wiki/electronic-bills-of-exchange)
 
-
+[Wikipedia: Cheque](https://en.wikipedia.org/wiki/Cheque)
 
 ## Stable coins 
 
 [Ethereum Fondation: Stablecoins](https://ethereum.org/stablecoins/)
 
 [Bridge](https://www.bridge.xyz/) - payments platform owned by [Stripe](https://stripe.com), built with stablecoins, to simplify global money movement.
-
 
 ### Metamask: mUSD 
 
@@ -24,5 +23,3 @@ sidebar_position: 1
 ### Tether: USDT
 
 [Wikipedia: Tether (cryptocurrency)](https://en.wikipedia.org/wiki/Tether_(cryptocurrency))
-
-
