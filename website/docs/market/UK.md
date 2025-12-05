@@ -27,6 +27,10 @@ sidebar_position: 3
 
 [The Law Commission: Smart contracts](https://lawcom.gov.uk/project/smart-contracts/)
 
+[The Law Commission: Digital assets and electronic trade documents in private international law](https://lawcom.gov.uk/project/digital-assets-and-electronic-trade-documents-in-private-international-law/)
+
+
+
 ---
 
 ### Case law 

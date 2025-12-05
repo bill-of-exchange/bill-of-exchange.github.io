@@ -8,8 +8,6 @@ sidebar_position: 1
 
 [Cryptonomica: electronic bills of exchange](https://github.com/Cryptonomica/cryptonomica/wiki/electronic-bills-of-exchange)
 
-[Wikipedia: Cheque](https://en.wikipedia.org/wiki/Cheque)
-
 ## Stable coins 
 
 [Ethereum Fondation: Stablecoins](https://ethereum.org/stablecoins/)
