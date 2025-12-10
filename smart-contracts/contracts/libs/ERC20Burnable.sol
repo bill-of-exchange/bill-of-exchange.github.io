@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
+
 // Fork of OpenZeppelin Contracts v5.4.0 ERC20Burnable.
 // Only change: inherits the forked ERC20 from this repository.
+
 pragma solidity ^0.8.20;
 
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
@@ -13,15 +15,24 @@ import {ERC20} from "./ERC20.sol";
  */
 abstract contract ERC20Burnable is Context, ERC20 {
     /**
-     * @dev Destroys `value` tokens from the caller.
+     * @dev Destroys a `value` amount of tokens from the caller.
+     *
+     * See {ERC20-_burn}.
      */
     function burn(uint256 value) public virtual {
         _burn(_msgSender(), value);
     }
 
     /**
-     * @dev Destroys `value` tokens from `account`, deducting from the caller's
-     * allowance.
+     * @dev Destroys a `value` amount of tokens from `account`, deducting from
+     * the caller's allowance.
+     *
+     * See {ERC20-_burn} and {ERC20-allowance}.
+     *
+     * Requirements:
+     *
+     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * `value`.
      */
     function burnFrom(address account, uint256 value) public virtual {
         _spendAllowance(account, _msgSender(), value);

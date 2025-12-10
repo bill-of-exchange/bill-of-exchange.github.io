@@ -1,116 +1,137 @@
 // SPDX-License-Identifier: MIT
-// Fork of an ERC-1363 implementation adapted to the forked ERC20 in this repository.
+
+// Fork of OpenZeppelin Contracts v5.4.0 ERC1363 .
+// Only change: inherits the forked ERC20 from this repository.
+
 pragma solidity ^0.8.20;
 
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {ERC20} from "./ERC20.sol";
-
-interface IERC1363 is IERC165 {
-    function transferAndCall(address to, uint256 value) external returns (bool);
-
-    function transferAndCall(address to, uint256 value, bytes calldata data) external returns (bool);
-
-    function transferFromAndCall(address from, address to, uint256 value) external returns (bool);
-
-    function transferFromAndCall(address from, address to, uint256 value, bytes calldata data) external returns (bool);
-
-    function approveAndCall(address spender, uint256 value) external returns (bool);
-
-    function approveAndCall(address spender, uint256 value, bytes calldata data) external returns (bool);
-}
-
-interface IERC1363Receiver is IERC165 {
-    function onTransferReceived(address operator, address from, uint256 value, bytes calldata data) external returns (bytes4);
-}
-
-interface IERC1363Spender is IERC165 {
-    function onApprovalReceived(address owner, uint256 value, bytes calldata data) external returns (bytes4);
-}
+import {IERC165, ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {IERC1363} from "@openzeppelin/contracts/interfaces/IERC1363.sol";
+import {ERC1363Utils} from "@openzeppelin/contracts/token/ERC20/utils/ERC1363Utils.sol";
 
 /**
- * @dev ERC-1363 implementation that builds on the forked ERC20.
+ * @title ERC1363
+ * @dev Extension of {ERC20} tokens that adds support for code execution after transfers and approvals
+ * on recipient contracts. Calls after transfers are enabled through the {ERC1363-transferAndCall} and
+ * {ERC1363-transferFromAndCall} methods while calls after approvals can be made with {ERC1363-approveAndCall}
+ *
+ * _Available since v5.1._
  */
-abstract contract ERC1363 is ERC20, IERC1363 {
-    using Address for address;
+abstract contract ERC1363 is ERC20, ERC165, IERC1363 {
+    /**
+     * @dev Indicates a failure within the {transfer} part of a transferAndCall operation.
+     * @param receiver Address to which tokens are being transferred.
+     * @param value Amount of tokens to be transferred.
+     */
+    error ERC1363TransferFailed(address receiver, uint256 value);
 
-    bytes4 private constant _INTERFACE_ID_ERC1363 = 0xb0202a11;
-    bytes4 private constant _INTERFACE_ID_ERC1363_RECEIVER = 0x88a7ca5c;
-    bytes4 private constant _INTERFACE_ID_ERC1363_SPENDER = 0x7b04a2d0;
+    /**
+     * @dev Indicates a failure within the {transferFrom} part of a transferFromAndCall operation.
+     * @param sender Address from which to send tokens.
+     * @param receiver Address to which tokens are being transferred.
+     * @param value Amount of tokens to be transferred.
+     */
+    error ERC1363TransferFromFailed(address sender, address receiver, uint256 value);
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == _INTERFACE_ID_ERC1363 || interfaceId == type(IERC165).interfaceId;
+    /**
+     * @dev Indicates a failure within the {approve} part of a approveAndCall operation.
+     * @param spender Address which will spend the funds.
+     * @param value Amount of tokens to be spent.
+     */
+    error ERC1363ApproveFailed(address spender, uint256 value);
+
+    /// @inheritdoc IERC165
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+        return interfaceId == type(IERC1363).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function transferAndCall(address to, uint256 value) public virtual override returns (bool) {
+    /**
+     * @dev Moves a `value` amount of tokens from the caller's account to `to`
+     * and then calls {IERC1363Receiver-onTransferReceived} on `to`. Returns a flag that indicates
+     * if the call succeeded.
+     *
+     * Requirements:
+     *
+     * - The target has code (i.e. is a contract).
+     * - The target `to` must implement the {IERC1363Receiver} interface.
+     * - The target must return the {IERC1363Receiver-onTransferReceived} selector to accept the transfer.
+     * - The internal {transfer} must succeed (returned `true`).
+     */
+    function transferAndCall(address to, uint256 value) public returns (bool) {
         return transferAndCall(to, value, "");
     }
 
-    function transferAndCall(address to, uint256 value, bytes memory data) public virtual override returns (bool) {
-        transfer(to, value);
-        require(_checkOnTransferReceived(_msgSender(), _msgSender(), to, value, data), "ERC1363: transfer to non ERC1363Receiver implementer");
+    /**
+     * @dev Variant of {transferAndCall} that accepts an additional `data` parameter with
+     * no specified format.
+     */
+    function transferAndCall(address to, uint256 value, bytes memory data) public virtual returns (bool) {
+        if (!transfer(to, value)) {
+            revert ERC1363TransferFailed(to, value);
+        }
+        ERC1363Utils.checkOnERC1363TransferReceived(_msgSender(), _msgSender(), to, value, data);
         return true;
     }
 
-    function transferFromAndCall(address from, address to, uint256 value) public virtual override returns (bool) {
+    /**
+     * @dev Moves a `value` amount of tokens from `from` to `to` using the allowance mechanism
+     * and then calls {IERC1363Receiver-onTransferReceived} on `to`. Returns a flag that indicates
+     * if the call succeeded.
+     *
+     * Requirements:
+     *
+     * - The target has code (i.e. is a contract).
+     * - The target `to` must implement the {IERC1363Receiver} interface.
+     * - The target must return the {IERC1363Receiver-onTransferReceived} selector to accept the transfer.
+     * - The internal {transferFrom} must succeed (returned `true`).
+     */
+    function transferFromAndCall(address from, address to, uint256 value) public returns (bool) {
         return transferFromAndCall(from, to, value, "");
     }
 
-    function transferFromAndCall(address from, address to, uint256 value, bytes memory data) public virtual override returns (bool) {
-        transferFrom(from, to, value);
-        require(_checkOnTransferReceived(_msgSender(), from, to, value, data), "ERC1363: transfer to non ERC1363Receiver implementer");
-        return true;
-    }
-
-    function approveAndCall(address spender, uint256 value) public virtual override returns (bool) {
-        return approveAndCall(spender, value, "");
-    }
-
-    function approveAndCall(address spender, uint256 value, bytes memory data) public virtual override returns (bool) {
-        approve(spender, value);
-        require(_checkOnApprovalReceived(spender, value, data), "ERC1363: approval to non ERC1363Spender implementer");
-        return true;
-    }
-
-    function _checkOnTransferReceived(
-        address operator,
+    /**
+     * @dev Variant of {transferFromAndCall} that accepts an additional `data` parameter with
+     * no specified format.
+     */
+    function transferFromAndCall(
         address from,
         address to,
         uint256 value,
         bytes memory data
-    ) internal returns (bool) {
-        if (!to.isContract()) {
-            return true;
+    ) public virtual returns (bool) {
+        if (!transferFrom(from, to, value)) {
+            revert ERC1363TransferFromFailed(from, to, value);
         }
-
-        try IERC1363Receiver(to).onTransferReceived(operator, from, value, data) returns (bytes4 retval) {
-            return retval == _INTERFACE_ID_ERC1363_RECEIVER;
-        } catch (bytes memory reason) {
-            if (reason.length == 0) {
-                return false;
-            } else {
-                assembly {
-                    revert(add(32, reason), mload(reason))
-                }
-            }
-        }
+        ERC1363Utils.checkOnERC1363TransferReceived(_msgSender(), from, to, value, data);
+        return true;
     }
 
-    function _checkOnApprovalReceived(address spender, uint256 value, bytes memory data) internal returns (bool) {
-        if (!spender.isContract()) {
-            return true;
-        }
+    /**
+     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the
+     * caller's tokens and then calls {IERC1363Spender-onApprovalReceived} on `spender`.
+     * Returns a flag that indicates if the call succeeded.
+     *
+     * Requirements:
+     *
+     * - The target has code (i.e. is a contract).
+     * - The target `spender` must implement the {IERC1363Spender} interface.
+     * - The target must return the {IERC1363Spender-onApprovalReceived} selector to accept the approval.
+     * - The internal {approve} must succeed (returned `true`).
+     */
+    function approveAndCall(address spender, uint256 value) public returns (bool) {
+        return approveAndCall(spender, value, "");
+    }
 
-        try IERC1363Spender(spender).onApprovalReceived(_msgSender(), value, data) returns (bytes4 retval) {
-            return retval == _INTERFACE_ID_ERC1363_SPENDER;
-        } catch (bytes memory reason) {
-            if (reason.length == 0) {
-                return false;
-            } else {
-                assembly {
-                    revert(add(32, reason), mload(reason))
-                }
-            }
+    /**
+     * @dev Variant of {approveAndCall} that accepts an additional `data` parameter with
+     * no specified format.
+     */
+    function approveAndCall(address spender, uint256 value, bytes memory data) public virtual returns (bool) {
+        if (!approve(spender, value)) {
+            revert ERC1363ApproveFailed(spender, value);
         }
+        ERC1363Utils.checkOnERC1363ApprovalReceived(_msgSender(), spender, value, data);
+        return true;
     }
 }
