@@ -1,9 +1,9 @@
 ---
 sidebar_position: 2
-title: "Dictionary"
+title: "Glossary"
 ---
 
-## "Dictionary" of useful terms and concepts
+# Glossary
 
 [Wikipedia: Negotiable instrument](https://en.wikipedia.org/wiki/Negotiable_instrument) 
 > A negotiable instrument is a document guaranteeing the payment of a specific amount of money, either on demand, or at a set time, whose payer is usually named on the document. 
