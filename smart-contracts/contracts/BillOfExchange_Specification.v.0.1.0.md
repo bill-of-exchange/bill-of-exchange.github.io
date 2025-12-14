@@ -1,6 +1,10 @@
-# BillsOfExchange Smart Contract 
+# BillsOfExchange Smart Contract Specification
 
-**Specification v0.1.0 (Draft)**
+**Version:** 0.1.0  
+**Status:** Draft  
+**Date:** December 2024  
+**Author:** [Viktor Ageyev](https://github.com/ageyev)  
+**Repository:** https://github.com/bill-of-exchange/bill-of-exchange.github.io 
 
 ## 0. Status, Scope and Philosophy
 

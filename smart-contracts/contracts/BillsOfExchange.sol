@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+//
 // BillsOfExchange Smart Contract v0.1.0
 //
 // LEGAL MODEL
@@ -46,13 +47,6 @@ import "./libs/ERC1363.sol";         // Fork of ERC1363 implementation using for
 /// @dev Each smallest unit (1 raw unit) = one bill of exchange for 0.01 ILS.
 /// @custom:security-contact security@example.com
 contract BillsOfExchange is ERC20, ERC20Burnable, ERC1363 {
-
-    // =========================================================================
-    // VERSIONING
-    // =========================================================================
-
-    /// @notice Semantic version of this contract.
-    string public constant CONTRACT_VERSION = "0.1.0";
 
     // =========================================================================
     // PARTY ADDRESSES
