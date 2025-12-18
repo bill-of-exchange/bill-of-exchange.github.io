@@ -29,3 +29,9 @@ git push github
 #git push gitlab --all
 
 docusaurus clear
+
+# fetch remote branch:
+# git branch -r
+  #  github/HEAD -> github/master
+  #  github/claude/cascading-cashback-contract-iTcpn
+# git switch --track github/claude/cascading-cashback-contract-iTcpn
