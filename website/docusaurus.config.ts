@@ -46,6 +46,19 @@ const config: Config = {
         locales: ['en'],
     },
 
+    plugins: [
+        // `pino` (pulled in by wagmi via @walletconnect/logger) contains an optional
+        // `require('pino-pretty')`, reached only when pretty-printed logging is enabled,
+        // which nothing here does. Resolving it to an empty module silences the
+        // bundler's "Module not found" warning without shipping pino-pretty.
+        () => ({
+            name: 'ignore-optional-pino-pretty',
+            configureWebpack: () => ({
+                resolve: {alias: {'pino-pretty': false}},
+            }),
+        }),
+    ],
+
     presets: [
         [
             'classic',

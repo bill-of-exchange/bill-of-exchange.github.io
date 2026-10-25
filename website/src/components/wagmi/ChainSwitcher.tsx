@@ -1,5 +1,5 @@
 // src/components/wagmi/ChainSwitcher.tsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useAccount, useSwitchChain} from 'wagmi';
 import {mode} from '../../constants';
 
@@ -9,11 +9,20 @@ export default function ChainSwitcher (){
 
     const account = useAccount();
 
-    if (!account||!account.isConnected) {
-        mode == 'dev'?console.log('no account connected'):null;
+    // Log from an effect, not from render: effects never run during static site
+    // generation (so `docusaurus build` stays quiet), and they fire once per
+    // connection change instead of on every re-render.
+    useEffect(() => {
+        if (mode !== 'dev') return;
+        if (account.isConnected) {
+            console.log('account connected: ', account.address);
+        } else {
+            console.log('no account connected');
+        }
+    }, [account.isConnected, account.address]);
+
+    if (!account.isConnected) {
         return null;
-    } else {
-        mode == 'dev'?console.log('account connected: ', account.address):null;
     }
 
     return (
