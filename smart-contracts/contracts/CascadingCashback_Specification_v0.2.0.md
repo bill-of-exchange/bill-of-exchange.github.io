@@ -1,6 +1,6 @@
 # CascadingCashback Smart Contract Specification
 
-**Version:** 0.1.0  
+**Version:** 0.2.0
 **Status:** Draft  
 **Date:** December 2024  
 **Author:** [Viktor Ageyev](https://github.com/ageyev)  

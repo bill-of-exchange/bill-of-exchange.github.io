@@ -15,7 +15,7 @@ const config: HardhatUserConfig = {
                 //   version: "0.8.28", // << keep only one profile, for verification to work
                 // },
                 // production: {
-                version: "0.8.28",
+                version: "0.8.31",
                 settings: {
                     optimizer: {
                         enabled: true,

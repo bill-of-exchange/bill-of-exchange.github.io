@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 //
-// BillsOfExchange Smart Contract v0.1.0
-//
+// BillsOfExchange Smart Contract
+// Version: 0.1.0
+// Author: [Viktor Ageyev](https://github.com/ageyev)
+// Specification: BillOfExchange_Specification.v.0.1.0.md
+// https://github.com/bill-of-exchange/bill-of-exchange.github.io/blob/master/smart-contracts/contracts/BillOfExchange_Specification.v.0.1.0.md
+// ========================================================================
 // LEGAL MODEL
 // -----------
 // Bearer bill of exchange under UK Bills of Exchange Act 1882, adapted to
@@ -36,7 +40,7 @@
 // This contract requires forked OpenZeppelin ERC20 v5.4.0 with _balances and
 // _totalSupply changed from private to internal. See libs/ERC20.sol.
 
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.31;
 
 import "./libs/ERC20.sol";           // Fork of OpenZeppelin ERC20 v5.4.0 (internal _balances/_totalSupply)
 import "./libs/ERC20Burnable.sol";   // Fork of OpenZeppelin ERC20Burnable v5.4.0 using forked ERC20

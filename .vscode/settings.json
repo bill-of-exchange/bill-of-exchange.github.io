@@ -61,7 +61,13 @@
     "*": true,
     "plaintext": false,
     "markdown": false
-  }
+  },
+  "wake.compiler.solc.remappings": [
+    "@openzeppelin/=node_modules/@openzeppelin/",
+    "forge-std/=node_modules/forge-std/",
+    "hardhat/=node_modules/hardhat/",
+    "smart-contracts/=node_modules/smart-contracts/"
+  ]
 
   // Codex configuration (model, reasoning, permissions) is managed
   // from the Codex panel inside VS Code, not via settings.json.
