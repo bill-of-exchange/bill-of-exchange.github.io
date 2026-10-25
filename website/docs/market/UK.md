@@ -15,6 +15,13 @@ sidebar_position: 3
 
 [UK Electronic Trade Documents Act (ETDA) 2023](https://www.legislation.gov.uk/ukpga/2023/38) 
 
+[FCA: Policy Statement PS26/10 Crypto Regime. Stablecoin issuance](https://www.fca.org.uk/publication/policy/ps26-10.pdf) 
+
+[FCA: Consultation Paper CP25/14*** Stablecoin Issuance and Cryptoasset Custody](https://www.fca.org.uk/publication/consultation/cp25-14.pdf)
+
+[A&O Shearman: Final rules for new UK crypto regime](https://www.aoshearman.com/en/insights/ao-shearman-on-fintech-and-digital-assets/final-rules-for-new-uk-crypto-regime) 
+
+
 --- 
 
 ### Reports and recommendations
@@ -28,8 +35,6 @@ sidebar_position: 3
 [The Law Commission: Smart contracts](https://lawcom.gov.uk/project/smart-contracts/)
 
 [The Law Commission: Digital assets and electronic trade documents in private international law](https://lawcom.gov.uk/project/digital-assets-and-electronic-trade-documents-in-private-international-law/)
-
-
 
 ---
 

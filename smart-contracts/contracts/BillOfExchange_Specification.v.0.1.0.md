@@ -2,13 +2,13 @@
 
 **Version:** 0.1.0  
 **Status:** Draft  
-**Date:** December 2024  
+**Date:** December 2025  
 **Author:** [Viktor Ageyev](https://github.com/ageyev)  
 **Repository:** https://github.com/bill-of-exchange/bill-of-exchange.github.io 
 
 ## 0. Status, Scope and Philosophy
 
-This document specifies the implementation of a **bearer bill of exchange** using [distributed ledger technology (DLT)](https://en.wikipedia.org/wiki/Distributed_ledger) under the [UK Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61) as adapted to electronic form according to the [UK Electronic Communications Act 2000](https://www.legislation.gov.uk/ukpga/2000/7) and the [UK Electronic Trade Documents Act 2023](https://www.legislation.gov.uk/ukpga/2023/30/contents). 
+This document specifies the implementation of a **bearer bill of exchange** using [distributed ledger technology (DLT)](https://en.wikipedia.org/wiki/Distributed_ledger) under the [UK Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61) as adapted to electronic form according to the [UK Electronic Communications Act 2000](https://www.legislation.gov.uk/ukpga/2000/7) and the [UK Electronic Trade Documents Act 2023](https://www.legislation.gov.uk/ukpga/2023/38/contents). 
 
 It contains both a description of the smart contract code and of the relevant *lex cambiaria* (law of negotiable instruments)
 
@@ -56,14 +56,14 @@ The relevant parties under the bill of exchange model are:
   The drawer is the natural or legal person identified in the descriptive constants (e.g. `DRAWER_NAME`). Under [Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61), the drawer is the person who issues (draws) and signs the bill of exchange.
 
 * **Drawer’s Ethereum address (technical representation)**
-  The constant `DRAWER_ETH_ADDRESS` is the Ethereum address used by the drawer to issue (draw) bills via the `draw(...)` function. A signature of a successful transaction that calls `draw(...)` from `DRAWER_ETH_ADDRESS` is treated as the drawer’s signature for the purposes of BoEA 1882 (in particular ss.3 and 17) and the Electronic Trade Documents Act 2023 s.3.
+  The constant `DRAWER_ETH_ADDRESS` is the Ethereum address used by the drawer to issue (draw) bills via the `draw(...)` function. A signature of a successful transaction that calls `draw(...)` from `DRAWER_ETH_ADDRESS` is treated as the drawer’s signature for the purposes of BoEA 1882 (in particular s.3, and s.23: no person is liable as drawer who has not signed the bill as such). Electronic signatures are recognised at English common law (see [J Pereira Fernandes SA v Mehta [2006] EWHC 813 (Ch)](https://vlex.co.uk/vid/j-pereira-fernandes-sa-793329805) and the Law Commission report [Electronic Execution of Documents (Law Com No 386, 2019)](https://lawcom.gov.uk/project/electronic-execution-of-documents/)) and are admissible in evidence under [s.7 of the Electronic Communications Act 2000](https://www.legislation.gov.uk/ukpga/2000/7/section/7). Under [ETDA 2023 s.3(3)](https://www.legislation.gov.uk/ukpga/2023/38/section/3), anything done in relation to an electronic trade document has the same effect as it would have in relation to an equivalent paper trade document.
 
 
 * **Drawee / Acceptor (legal party)**
   The drawee is the natural or legal person identified in the descriptive constants (e.g. `DRAWEE_NAME`). Upon acceptance, the drawee becomes the primary obligor on the bill of exchange.
 
 * **Drawee’s Ethereum address (technical representation)**
-  The constant `DRAWEE_ETH_ADDRESS` is the Ethereum address used by the drawee to accept bills via `accept(...)` / `acceptOn(...)`. A signature of a successful transaction that calls these functions from `DRAWEE_ETH_ADDRESS` is treated as the drawee’s signature of acceptance under BoEA 1882 (especially s.17: “The mere signature of the drawee without additional words is sufficient”) and ETDA 2023 s.3.
+  The constant `DRAWEE_ETH_ADDRESS` is the Ethereum address used by the drawee to accept bills via `accept(...)` / `acceptOn(...)`. A signature of a successful transaction that calls these functions from `DRAWEE_ETH_ADDRESS` is treated as the drawee’s signature of acceptance under BoEA 1882 (especially s.17(2)(a): “The mere signature of the drawee without additional words is sufficient”), on the same legal basis as the drawer’s signature (see above). By ETDA 2023 s.3(3), acceptance recorded on the electronic bill has the same effect as acceptance written on a paper bill.
 
 
 * **Bearer / Holder**
@@ -104,12 +104,7 @@ Under the [UK Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/V
 * Failure to perform KYC can create regulatory exposure under applicable AML/CFT regimes (for obliged entities), but **does not, by itself, invalidate the bill** or extinguish the drawee’s obligation to pay a duly issued and accepted bill presented by the bearer (subject to general limitations: illegality, sanctions, public policy, etc.).
 * This is conceptually similar to paper cash (banknotes), which are also bearer instruments rooted in the same legal tradition.
 
-The contract will include a public string constant, for example:
-
-```solidity
-string public constant KYC_AND_AML_NOTICE = 
-    "Transfer, holding and enforcement of these bearer bills of exchange do not depend on KYC/AML checks for their legal validity under the Bills of Exchange Act 1882 and related lex cambiaria. Applicable AML/CFT and sanctions regimes may impose separate obligations on regulated entities, but failure to perform KYC/AML procedures does not, by itself, extinguish the drawee's obligation to pay a bill presented by the bearer.";
-```
+The contract includes the public string constant `KYC_AND_AML_NOTICE`; its exact text is given in §3.2.
 
 This is not a waiver of KYC/AML obligations; it clarifies the relationship between [UK Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61) and regulatory regimes.
 
@@ -225,7 +220,7 @@ string public constant DESCRIPTION =
     "Every smallest unit of this ERC-20-compatible token represents one separate bill of exchange payable to bearer, not to order, in the amount of 0.01 Israeli new shekel. The bearer is the natural or legal person who owns the Ethereum address that holds the token balance. Acceptance by the drawee is recorded on-chain and changes the legal status of the bill from unaccepted to accepted. In the case of a blockchain fork, the drawee will publicly designate which Ethereum chain is treated as the valid registry for these bills; in case of dispute, the question shall be resolved by a competent court or arbitration tribunal under the applicable lex cambiaria. All Ethereum test networks are not valid registries for real bills of exchange.";
     
 string public constant KYC_AND_AML_NOTICE = 
-    "Failure to perform KYC can create regulatory exposure under applicable AML/CFT regimes (for obliged entities), but does not, by itself, invalidate the bill or extinguish the drawee’s obligation to pay a duly issued and accepted bill presented by the bearer (subject to general limitations: illegality, sanctions, public policy, etc.). This is conceptually similar to paper cash (banknotes), which are also bearer instruments rooted in the same legal tradition.";
+    "Failure to perform KYC can create regulatory exposure under applicable AML/CFT regimes (for obliged entities), but does not, by itself, invalidate the bill or extinguish the drawee's obligation to pay a duly issued and accepted bill presented by the bearer (subject to general limitations: illegality, sanctions, public policy, etc.). This is conceptually similar to paper cash (banknotes), which are also bearer instruments rooted in the same legal tradition.";
 ```
 
 ### 3.3 Decimals and ERC-20 Metadata
@@ -320,7 +315,7 @@ Key points:
 * **Legal meaning**
 
     * Each unit in `amount` corresponds to issuing (drawing) one new bill of exchange in the amount of 0.01 ILS.
-    * The signature of the `draw` transaction from `DRAWER_ETH_ADDRESS` is treated as the drawer’s signature under BoEA 1882 and ETDA 2023.
+    * The signature of the `draw` transaction from `DRAWER_ETH_ADDRESS` is treated as the drawer’s signature under BoEA 1882 (see §1.2 for the legal basis of electronic signatures).
 
 ### 4.3 Transfers of Unaccepted Bills
 
@@ -482,7 +477,7 @@ The following invariants are fundamental to the legal correctness of this contra
 3. **Access control**
 
     * Only `DRAWER_ETH_ADDRESS` may call `draw(...)`.
-    * Only `DRAWEe_ETH_ADDRESS` may call `accept(...)` / `acceptOn(...)`.
+    * Only `DRAWEE_ETH_ADDRESS` may call `accept(...)` / `acceptOn(...)`.
 
 4. **Unaccepted ledger isolation**
 
