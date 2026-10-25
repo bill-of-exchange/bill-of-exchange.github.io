@@ -144,7 +144,7 @@ contracts/
 
 ### 2.3 Forked Libraries (“Fork & Expose” Pattern)
 
-We deliberately **fork** OpenZeppelin’s ERC-20 implementation, but keep the public names (`ERC20`, `ERC20Burnable`) to preserve a familiar inheritance signature:
+We deliberately **fork** OpenZeppelin’s ERC-20 implementation but keep the public names (`ERC20`, `ERC20Burnable`) to preserve a familiar inheritance signature:
 
 ```solidity
 contract BillsOfExchange is ERC20, ERC20Burnable, ERC1363 {
