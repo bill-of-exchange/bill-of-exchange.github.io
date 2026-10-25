@@ -29,7 +29,14 @@ const config: Config = {
     projectName: 'bill-of-exchange.github.io', // Usually your repo name.
 
     onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
+    // Moved here from the top-level `onBrokenMarkdownLinks` (deprecated since 3.9, removed in v4)
+    markdown: {
+        // .md → plain CommonMark, .mdx → MDX (default 'mdx' would compile .md as MDX too)
+        format: 'detect',
+        hooks: {
+            onBrokenMarkdownLinks: 'warn',
+        },
+    },
 
     // Even if you don't use internationalization, you can use this field to set
     // useful metadata like HTML lang. For example, if your site is Chinese, you

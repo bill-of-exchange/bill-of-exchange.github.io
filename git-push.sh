@@ -16,7 +16,7 @@ git config --local user.email "$GIT_USER_EMAIL";
 
 #git config --local -l
 
-#docusaurus clear
+# docusaurus clear
 
 npm run -w website build && git add ./website/build && git commit -a -m "run build script"
 

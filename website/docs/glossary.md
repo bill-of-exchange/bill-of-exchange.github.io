@@ -6,7 +6,7 @@ title: "Glossary"
 # Glossary
 
 [Wikipedia: Negotiable instrument](https://en.wikipedia.org/wiki/Negotiable_instrument) 
-> A negotiable instrument is a document guaranteeing the payment of a specific amount of money, either on demand, or at a set time, whose payer is usually named on the document. 
+> A negotiable instrument is a document guaranteeing the payment for a specific amount of money, either on demand or at a set time, whose payer is usually named on the document. 
 
 > A negotiable instrument can serve to convey value constituting at least part of the performance of a contract, albeit perhaps not obvious in contract formation, in terms inherent in and arising from the requisite offer and acceptance and conveyance of consideration.
 
@@ -15,7 +15,7 @@ title: "Glossary"
 [Wikipedia: Cheque](https://en.wikipedia.org/wiki/Cheque) 
 > A cheque is a negotiable instrument instructing a financial institution to pay a specific amount of a specific currency from a specified transactional account held in the drawer's name with that institution. Both the drawer and payee may be natural persons or legal entities.
 
-> Cheques are a type of bill of exchange that were developed as a way to make payments without the need to carry large amounts of money. Paper money evolved from promissory notes, another form of negotiable instrument similar to cheques in that they were originally a written order to pay the given amount to whoever had it in their possession (the "bearer").
+> Cheques are a type of bill of exchange that were developed as a way to make payments without the need to carry large amounts of money. Paper money evolved from promissory notes, another form of a negotiable instrument similar to cheques in that they were originally a written order to pay the given amount to whoever had it in their possession (the "bearer").
 
 [Wikipedia: Cashier's check](https://en.wikipedia.org/wiki/Cashier%27s_check) 
 > A cashier's check (or cashier's cheque, cashier's order, official check; in Canada, the term *bank draft* is used, not to be confused with *Banker's draft* as used in the United States) is a check guaranteed by a bank, drawn on the bank's own funds and signed by a bank employee. Cashier's checks are treated as guaranteed funds because the bank, rather than the purchaser, is both the drawee and drawer and is responsible for paying the amount. 
