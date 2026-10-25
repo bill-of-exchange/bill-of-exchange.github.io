@@ -1,145 +1,120 @@
-// for verification to work, if you use Hardhat Runtime Environment (hre) object in verifyContract function:
-// you can’t switch networks from inside the script. Pick Sepolia when you invoke the script
+// Deploys the BillsOfExchange contract and verifies its source code on Etherscan and Blockscout.
 //
-// npx hardhat run scripts/viem-deploy-verify.ts --network sepolia
-// - creates ./artifacts and ./cache folders
+// Usage:
+//   npx hardhat run scripts/viem-deploy-verify.ts --network sepolia
 //
-// npx hardhat verify --network sepolia 0x... $ETH_DEV_ADDRESS
+// The target network comes from the --network option, not from the script: programmatic
+// verification runs through the Hardhat Runtime Environment, which is bound to the network
+// chosen on the command line and cannot switch networks mid-script.
+//
+// On a simulated network (e.g. --network hardhatMainnet) the script only deploys:
+// there is no explorer to verify on and no deployment worth recording.
+//
+// Manual re-verification, if needed (the constructor takes no arguments):
+//   npx hardhat verify --network sepolia <contract address>
 
-import {WaitForTransactionReceiptParameters} from 'viem';
 import hre from "hardhat";
-import {verifyContract, VerifyContractArgs} from "@nomicfoundation/hardhat-verify/verify";
-import * as console from "node:console";
-import * as process from "node:process";
-import {writeFileSync} from "node:fs";
+import {verifyContract} from "@nomicfoundation/hardhat-verify/verify";
+import {mkdirSync, writeFileSync} from "node:fs";
 
-const contractName:string = "BillsOfExchange";
-const fullyQualifiedContractName:string = `contracts/${contractName}.sol:${contractName}`; //  "fully qualified contract name"
-// const constructorArgs:[`0x${string}`] = [process.env.ETH_DEV_ADDRESS];
-const _draweeEthereumAddress:string|undefined = process.env.ETH_DEV_ADDRESS;
-const constructorArgs:[string|undefined] = [_draweeEthereumAddress];
+const CONTRACT_NAME = "BillsOfExchange";
+const FULLY_QUALIFIED_CONTRACT_NAME = `contracts/${CONTRACT_NAME}.sol:${CONTRACT_NAME}`;
 
-const chainName: string = "sepolia";
+// Explorers index a new contract only after a few blocks; verifying earlier fails.
+const CONFIRMATIONS_BEFORE_VERIFICATION = 3;
 
-const main = async ()=>{
+// Deployment records are kept under version control. ./artifacts would be the wrong place:
+// it is git-ignored and wiped by `npx hardhat clean`.
+const DEPLOYMENTS_DIRECTORY = "./deployments";
 
-    const networkConnection = await hre.network.connect(chainName);
+const VERIFICATION_PROVIDERS = ["etherscan", "blockscout"] as const;
 
-    const viemWalletClients = await networkConnection.viem.getWalletClients();
+async function main(): Promise<void> {
+    const networkConnection = await hre.network.connect();
+    const {networkName} = networkConnection;
+    const isSimulatedNetwork = networkConnection.networkConfig.type === "edr-simulated";
 
-    if (viemWalletClients.length==0){
-        console.error("HH can not get viem walletClient");
+    const [deployerWalletClient] = await networkConnection.viem.getWalletClients();
+    if (deployerWalletClient === undefined) {
+        throw new Error(`No deployer account configured for network "${networkName}".`);
+    }
+    const publicClient = await networkConnection.viem.getPublicClient();
+
+    console.log(`Deploying ${CONTRACT_NAME} to ${networkName} from ${deployerWalletClient.account.address}`);
+
+    // The v0.1.0 constructor takes no arguments: the parties are compile-time constants,
+    // and no bills exist until the drawer calls draw().
+    const artifact = await hre.artifacts.readArtifact(CONTRACT_NAME);
+    const deploymentTxHash = await deployerWalletClient.deployContract({
+        abi: artifact.abi,
+        bytecode: artifact.bytecode as `0x${string}`,
+        args: [], // viem requires `args` when the ABI type is generic, even if empty
+    });
+
+    console.log(`⏳ Waiting for confirmation of tx ${deploymentTxHash}`);
+    const receipt = await publicClient.waitForTransactionReceipt({
+        hash: deploymentTxHash,
+        confirmations: isSimulatedNetwork ? 1 : CONFIRMATIONS_BEFORE_VERIFICATION,
+    });
+    const contractAddress = receipt.contractAddress;
+    if (!contractAddress) {
+        throw new Error(`Deployment tx ${deploymentTxHash} did not create a contract.`);
+    }
+    console.log(`✅ Deployed ${CONTRACT_NAME} on ${networkName} at ${contractAddress}`);
+
+    if (isSimulatedNetwork) {
+        console.log("Simulated network: deployment record and source verification skipped.");
         return;
     }
 
-    const walletClient = viemWalletClients[0]; // <<< if only one, or modify code
-    const publicClient = await networkConnection.viem.getPublicClient();
-
-    // ------ Deploy contract
-
-    console.log('Deploying contract to', chainName);
-
-    const artifact = await hre.artifacts.readArtifact(contractName);
-
-    const txHash = await walletClient.deployContract({
-        abi: artifact.abi,
-        bytecode: artifact.bytecode as `0x${string}`,
-        args: constructorArgs as any[],
-    });
-
-    const  waitForTransactionReceiptParameters: WaitForTransactionReceiptParameters = {
-        hash:txHash,
-        confirmations: 3, // default 1, but you have to wait until your contract will be on Etherscan to verify it
-    };
-
-    console.log(`⏳ Waiting for ${waitForTransactionReceiptParameters.confirmations} confirmations for tx: ${txHash}`);
-
-    const receipt = await publicClient.waitForTransactionReceipt(waitForTransactionReceiptParameters);
-    const contractAddress = receipt.contractAddress;
-
-    if (!contractAddress) {
-        throw new Error('Failed to retrieve contract address');
-    }
-
-    console.log(`✅ Deployed ${contractName} on ${chainName} at: ${contractAddress}`);
-
-    const jsonData = {
-        contractName: contractName,
-        chainName: chainName,
+    saveDeploymentRecord({
+        contractName: CONTRACT_NAME,
+        networkName,
         chainId: publicClient.chain.id,
-        contractAddress: contractAddress,
-        deploymentTx: txHash,
-        time: new Date().toISOString()
-        // deploymentTxReceipt: receipt,
-    };
-
-    // const jsonString = JSON.stringify(jsonData, null, 2);
-    const serializedData = JSON.stringify(
-        jsonData,
-        (key, value) => {
-        if (typeof value === "bigint") {
-            return value.toString(); // Convert BigInt to string
-        }
-        return value; // Return other values as is
-    },
-        2
-    );
-
-    const filePath = `./artifacts/${Date.now()}_${chainName}_${contractAddress}.json`;
-
-    try {
-        writeFileSync(filePath, serializedData); // overwrites the file
-        console.log("Data saved to", filePath);
-    } catch (err) {
-        console.error('Failed to write file:', err);
-    }
-
-    // ------ Verify contract
-
-    // verification
-    // for HH 3.0.0.-next26
-    // https://github.com/NomicFoundation/hardhat/tree/hardhat%403.0.0-next.26/v-next/hardhat-verify#programmatic-verification
-
-    // --- Etherscan
-    const verifyContractArgs: VerifyContractArgs = {
-        contract: fullyQualifiedContractName, //  fully qualified contract name, like "contracts/MyContract.sol:MyContract"
-        address: contractAddress,
-        constructorArgs: constructorArgs,
-        provider: "etherscan", // or "blockscout" for Blockscout-compatible explorers
-    };
-
-    try {
-        const etherscanResult = await verifyContract(
-            verifyContractArgs,
-            hre
-        );
-    } catch (error:any){
-        const errorMessage = error.message || error.toString();
-        console.error("❌ Etherscan verification error:");
-        console.error(errorMessage);
-    }
-
-    // --- Blockscout
-    verifyContractArgs.provider = "blockscout";
-    try {
-        const blockscoutResult = await verifyContract(
-            verifyContractArgs,
-            hre
-        );
-    } catch (error:any){
-        const errorMessage = error.message || error.toString();
-        console.error("❌ Blockscout verification error:");
-        console.error(errorMessage);
-    }
-};
-
-// Execute deployment
-main()
-    .then((contract) => {
-        // console.log("Deployment successful!");
-        process.exit(0);
-    })
-    .catch((error) => {
-        console.error("Deployment failed:", error);
-        process.exit(1);
+        contractAddress,
+        deploymentTx: deploymentTxHash,
+        blockNumber: receipt.blockNumber.toString(),
+        deployer: deployerWalletClient.account.address,
+        time: new Date().toISOString(),
     });
+
+    const failedProviders = await verifyOnExplorers(contractAddress);
+    if (failedProviders.length > 0) {
+        // The deployment itself succeeded; the address is printed above and saved in the record.
+        throw new Error(`Source verification failed on: ${failedProviders.join(", ")}`);
+    }
+}
+
+function saveDeploymentRecord(record: Record<string, string | number>): void {
+    mkdirSync(DEPLOYMENTS_DIRECTORY, {recursive: true});
+    // A sortable timestamp prefix keeps the records in deployment order.
+    const timestamp = String(record.time).replace(/[:.]/g, "-");
+    const filePath = `${DEPLOYMENTS_DIRECTORY}/${timestamp}_${record.networkName}_${record.contractAddress}.json`;
+    writeFileSync(filePath, JSON.stringify(record, null, 2) + "\n");
+    console.log(`Deployment record saved to ${filePath}`);
+}
+
+/** Tries every provider, even after a failure, and returns the names of those that failed. */
+async function verifyOnExplorers(contractAddress: string): Promise<string[]> {
+    const failedProviders: string[] = [];
+    for (const provider of VERIFICATION_PROVIDERS) {
+        try {
+            const isVerified = await verifyContract(
+                {contract: FULLY_QUALIFIED_CONTRACT_NAME, address: contractAddress, constructorArgs: [], provider},
+                hre,
+            );
+            if (!isVerified) {
+                failedProviders.push(provider);
+            }
+        } catch (error: unknown) {
+            console.error(`❌ ${provider} verification error:`, error instanceof Error ? error.message : error);
+            failedProviders.push(provider);
+        }
+    }
+    return failedProviders;
+}
+
+main().catch((error: unknown) => {
+    console.error("❌", error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+});

@@ -40,7 +40,7 @@
 // This contract requires forked OpenZeppelin ERC20 v5.4.0 with _balances and
 // _totalSupply changed from private to internal. See libs/ERC20.sol.
 
-pragma solidity ^0.8.31;
+pragma solidity 0.8.38;
 
 import "./libs/ERC20.sol";           // Fork of OpenZeppelin ERC20 v5.4.0 (internal _balances/_totalSupply)
 import "./libs/ERC20Burnable.sol";   // Fork of OpenZeppelin ERC20Burnable v5.4.0 using forked ERC20

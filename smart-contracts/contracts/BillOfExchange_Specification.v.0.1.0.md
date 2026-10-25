@@ -117,10 +117,10 @@ This is not a waiver of KYC/AML obligations; it clarifies the relationship betwe
 * Target Solidity version in this contract:
 
   ```solidity
-  pragma solidity ^0.8.20;
+  pragma solidity 0.8.38;
   ```
 
-* This aligns with [OpenZeppelin Contracts v5.4.0](https://github.com/OpenZeppelin/openzeppelin-contracts), which also use `^0.8.20`.
+[//]: # (* This aligns with [OpenZeppelin Contracts v5.4.0]&#40;https://github.com/OpenZeppelin/openzeppelin-contracts&#41;, which also use `^0.8.20`.)
 
 * The version can be upgraded in future with explicit review; any change to the compiler version must be treated as a minor or patch version bump of the contract (e.g. `0.1.1` or `0.2.0`).
 
