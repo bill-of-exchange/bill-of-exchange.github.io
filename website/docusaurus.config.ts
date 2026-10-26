@@ -4,6 +4,24 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+// Wallet libraries pulled in by wagmi import optional packages that only features this site
+// never uses would need. The bundler fails (or warns) on such imports when the packages are
+// not installed, so they are resolved to an empty module instead of being shipped:
+// - `pino-pretty`: an optional `require` in `pino` (via @walletconnect/logger), reached only
+//   when pretty-printed logging is enabled, which nothing here does;
+// - `@x402/*`: optional peer dependencies of @coinbase/cdp-sdk (via @wagmi/connectors →
+//   @base-org/account), reached only by x402 HTTP payments. An alias also covers subpaths
+//   such as `@x402/core/client`.
+const UNUSED_OPTIONAL_DEPENDENCIES = [
+    'pino-pretty',
+    '@x402/core',
+    '@x402/evm',
+    '@x402/svm',
+    '@x402/extensions',
+    '@x402/express',
+    '@x402/fetch',
+];
+
 const config: Config = {
     title: 'Bills of Exchange',
     tagline: 'Electronic Bills of Exchange on Decentralized Ledger',
@@ -47,14 +65,12 @@ const config: Config = {
     },
 
     plugins: [
-        // `pino` (pulled in by wagmi via @walletconnect/logger) contains an optional
-        // `require('pino-pretty')`, reached only when pretty-printed logging is enabled,
-        // which nothing here does. Resolving it to an empty module silences the
-        // bundler's "Module not found" warning without shipping pino-pretty.
         () => ({
-            name: 'ignore-optional-pino-pretty',
+            name: 'ignore-unused-optional-dependencies',
             configureWebpack: () => ({
-                resolve: {alias: {'pino-pretty': false}},
+                resolve: {
+                    alias: Object.fromEntries(UNUSED_OPTIONAL_DEPENDENCIES.map((name) => [name, false])),
+                },
             }),
         }),
     ],
