@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+# Builds the website, commits the build and pushes to GitHub.
+# Stops before committing or pushing anything if the build fails: otherwise the sources
+# would reach GitHub with a stale build, and GitHub Pages would keep serving the old site.
+
+# The paths below are relative to the repository root, where this script lives.
+cd "$(dirname "$0")" || exit 1
+
 # source "${HOME}"/.bashrc;
 source ./.env;
 
@@ -18,7 +26,17 @@ git config --local user.email "$GIT_USER_EMAIL";
 
 # docusaurus clear
 
-npm run -w website build && git add ./website/build && git commit -a -m "run build script"
+if ! npm run -w website build; then
+    echo "❌ Website build failed: nothing was committed or pushed." >&2
+    exit 1
+fi
+
+git add ./website/build
+# `git commit` fails when there is nothing to commit (e.g. the build has not changed);
+# that must not block pushing the commits made before running this script.
+if ! git diff --cached --quiet || ! git diff --quiet; then
+    git commit -a -m "run build script"
+fi
 
 ssh-add -D
 
