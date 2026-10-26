@@ -18,6 +18,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch} from '@fortawesome/free-solid-svg-icons';
 import {AlertType} from "@site/src/components/ui/InfimaAlert";
 import {TOKEN_DECIMALS} from "@site/src/constants";
+
+// Shown in the amount field on load; the state below must start from the same value.
+const DEFAULT_TRANSFER_AMOUNT = "10";
 import CurrencyInput, {CurrencyInputOnChangeValues} from 'react-currency-input-field';
 import CopyIcon from "@site/src/components/ui/CopyIcon";
 
@@ -28,7 +31,8 @@ export default function TransferBoE() {
     const [isWorking, setIsWorking] = useState<boolean>(false);
 
     const [toAddress, setToAddress] = useState<Address>();
-    const [amountToTransfer, setAmountToTransfer] = useState<number>(0);
+    // In the smallest units (bills of 0.01 ILS), ready to be passed to transfer().
+    const [amountToTransfer, setAmountToTransfer] = useState<bigint>(parseUnits(DEFAULT_TRANSFER_AMOUNT, TOKEN_DECIMALS));
     const [buttonText, setButtonText] = useState<string>("Transfer");
     const [txStatus, setTxStatus] = useState<string>("");
     const [inputAddressValidated, setInputAddressValidated] = useState<boolean|undefined>(undefined);
@@ -53,13 +57,18 @@ export default function TransferBoE() {
     const txReceipt = useWaitForTransactionReceipt({hash:txHash});
 
     const onValueChange = (value: string | undefined, name?: string | undefined, values?: CurrencyInputOnChangeValues | undefined) => {
-        if(values&&values.float&&values.float>=0){
-            setAmountToTransfer(values.float*10);
-        }
+        // `value` is the plain decimal string without the currency prefix, e.g. "10.25".
+        // parseUnits converts it exactly; multiplying the float would lose precision
+        // (0.29 * 100 === 28.999999999999996).
+        const isValidAmount = value !== undefined && values?.float != null && values.float >= 0;
+        setAmountToTransfer(isValidAmount ? parseUnits(value, TOKEN_DECIMALS) : 0n);
     };
 
     const onAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.trim();
+        // Forget the previous recipient as soon as the field stops holding a valid address:
+        // otherwise the Transfer button stays enabled and sends to an address no longer shown.
+        setToAddress(undefined);
         if (value.length==0){
             setInputAddressValidated(undefined);
             setValidationMessage("Input ETH address");
@@ -80,17 +89,16 @@ export default function TransferBoE() {
         try {
 
             // (!important) always check if args and other options values are valid, if not it will not trigger transaction
-            if(!toAddress||!isAddress){
+            if(!toAddress||!isAddress(toAddress, {strict: false})){
                 console.error("toAddress invalid:",toAddress);
                 return;
             }
 
             setClearStatus(false);
-            const value = BigInt(amountToTransfer) as bigint;
             const transferOptions = {
                 args: [
                     toAddress as Address,
-                    value as bigint,
+                    amountToTransfer,
                 ]
             } as const;
 
@@ -133,8 +141,9 @@ export default function TransferBoE() {
                                 disableGroupSeparators={true}
                                 prefix={currencySymbolString}
                                 // suffix={"₪"}
-                                defaultValue={10}
-                                decimalsLimit={2}
+                                defaultValue={DEFAULT_TRANSFER_AMOUNT}
+                                decimalsLimit={TOKEN_DECIMALS}
+                                allowNegativeValue={false}
                                 onValueChange={onValueChange}
                                 style={{
                                     // width: '80%',

@@ -13,17 +13,12 @@ import { injected } from 'wagmi/connectors'
 import type { Abi } from 'viem'
 import Layout from '@theme/Layout';
 import { Address, erc20Abi, formatUnits, isAddress, parseUnits } from 'viem';
+import { deployments, isDeployedChainId } from '@site/src/constants';
 
 /** -------------------------------------------------------------------------
- *  0) Chain → token address map (typesafe, fixes TS7053 error)
+ *  0) Chain → token address map: the single source of truth is constants.ts
  * --------------------------------------------------------------------------*/
-const CONTRACT_BY_CHAIN = {
-    1: '0x0000000000000000000000000000000000000000',        // <-- replace (mainnet)
-    11155111: '0xdd5d36c9cce7893ebfc35c4390511281cab3da85', // <-- replace (sepolia)
-} as const
-
-type SupportedChainId = keyof typeof CONTRACT_BY_CHAIN
-const isSupportedChainId = (n: number): n is SupportedChainId => n in CONTRACT_BY_CHAIN
+const CONTRACT_BY_CHAIN = deployments.BillsOfExchange
 
 /** -------------------------------------------------------------------------
  *  Small utilities
@@ -246,7 +241,7 @@ export default function BillsOfExchangePlayground() {
     const { connect, isPending: isConnecting } = useConnect()
     const { disconnect } = useDisconnect()
 
-    const tokenAddress: Address | undefined = chainId && isSupportedChainId(chainId) ? (CONTRACT_BY_CHAIN[chainId] as Address) : undefined
+    const tokenAddress: Address | undefined = isDeployedChainId(chainId) ? CONTRACT_BY_CHAIN[chainId] : undefined
 
     const { data: decimals } = useReadContract({ address: tokenAddress, abi: erc20Abi, functionName: 'decimals', query: { enabled: Boolean(tokenAddress) } })
     const { data: symbol } = useReadContract({ address: tokenAddress, abi: erc20Abi, functionName: 'symbol', query: { enabled: Boolean(tokenAddress) } })

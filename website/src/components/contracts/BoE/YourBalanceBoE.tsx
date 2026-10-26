@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch, faShekelSign} from '@fortawesome/free-solid-svg-icons';
 import EthAddress from "@site/src/components/wagmi/EthAddress";
 import TotalSupplyBoE from "@site/src/components/contracts/BoE/TotalSupplyBoE";
+import {TOKEN_DECIMALS} from "@site/src/constants";
 
 const currencySymbol = faShekelSign;
 
@@ -55,9 +56,9 @@ export default function YourBalanceBoE(){
 
                 <div>
                     {/* === Show Balance */}
-                    <b>{data?formatUnits(data as bigint, /* token decimals, e.g. */ 18) : 'no data'}</b>
+                    <b>{data !== undefined ? formatUnits(data, TOKEN_DECIMALS) : 'no data'}</b>
                     {" "}
-                    {data?<FontAwesomeIcon icon={currencySymbol} />:null}
+                    {data !== undefined ? <FontAwesomeIcon icon={currencySymbol} /> : null}
                 </div>
                 <button className="button button--secondary button--block"
                         onClick={handleClick}

@@ -5,7 +5,7 @@ import {useReadBillsOfExchangeBalanceOf} from "../../../generated";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch, faShekelSign} from '@fortawesome/free-solid-svg-icons';
 import EthAddress from "@site/src/components/wagmi/EthAddress";
-import {currencySymbolSVG, decimals} from "@site/src/constants";
+import {currencySymbolSVG, TOKEN_DECIMALS} from "@site/src/constants";
 
 // const currencySymbol = faShekelSign;
 
@@ -52,7 +52,7 @@ export default function BalanceBoE(){
             const { data: raw } = await refetch();
             console.log("raw:", raw);
             // ERC-20 balances are bigint; don't `Number()` (overflow risk). Format properly:
-            const formatted = formatUnits(raw as bigint, /* token decimals, e.g. */ decimals);
+            const formatted = formatUnits(raw as bigint, TOKEN_DECIMALS);
             setBalance(formatted);
         } catch (error) {
             console.error(error);

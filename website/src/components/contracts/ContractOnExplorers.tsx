@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 import {useAccount} from 'wagmi';
-import {blockchainExplorerUrl, ContractName, DeployedChainId, deployments} from "@site/src/constants";
+import {blockchainExplorerUrl, ContractName, DeployedChainId, deployments, isDeployedChainId} from "@site/src/constants";
 import {chains} from "@site/src/wagmiConfig";
 import {useColorMode} from '@docusaurus/theme-common';
 import styles from "@site/src/components/contracts/ContractOnExplorers.module.css";
@@ -17,15 +17,16 @@ export default function ContractOnExplorers(props: ContractOnExplorersProps){
 
     const {contractAddress, blockscoutLink, etherscanLink} = useMemo(() => {
 
-        let contractAddress;
-        chainId?
-            contractAddress=deployments[props.contractName][chainId as DeployedChainId]:
-            // return default (first in the array) chain from Wagmi config
-            contractAddress =  deployments[props.contractName][chains[0].id as DeployedChainId];
+        // Without a connected wallet, or with a wallet on a chain we have not deployed to,
+        // show the contract on wagmi's default chain (the first in `chains`): Sepolia while
+        // `mode` is 'dev'. The address and both explorer links must use the same chain.
+        const explorerChainId: DeployedChainId = isDeployedChainId(chainId)
+            ? chainId
+            : chains[0].id as DeployedChainId;
 
-        const blockscoutLink = `${blockchainExplorerUrl.Blockscout[chainId as DeployedChainId]}address/${contractAddress}`;
-
-        const etherscanLink = `${blockchainExplorerUrl.Etherscan[chainId as DeployedChainId]}address/${contractAddress}`;
+        const contractAddress = deployments[props.contractName][explorerChainId];
+        const blockscoutLink = `${blockchainExplorerUrl.Blockscout[explorerChainId]}address/${contractAddress}`;
+        const etherscanLink = `${blockchainExplorerUrl.Etherscan[explorerChainId]}address/${contractAddress}`;
 
         return {contractAddress,blockscoutLink,etherscanLink};
 

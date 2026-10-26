@@ -8,7 +8,8 @@ export const mode:'dev' | 'production' = 'dev';
 
 export const currencySymbolSVG = faShekelSign;
 export const currencySymbolString = "₪";
-export const decimals = 18; // TODO: change
+// Must equal BillsOfExchange.decimals(): one smallest unit = one bill = 0.01 ILS (one agora).
+export const TOKEN_DECIMALS = 2;
 
 export const CHAINS = [1, 11155111] as const;
 export type DeployedChainId = typeof CHAINS[number];
@@ -22,7 +23,7 @@ export type ContractName = 'BillsOfExchange';
 export const deployments = {
     BillsOfExchange: {
         1:"0x0000000000000000000000000000000000000000" as Address,
-        11155111: "0xdd5d36c9cce7893ebfc35c4390511281cab3da85" as Address, // Sepolia
+        11155111: "0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224" as Address, // Sepolia (demo deployment)
     }
 } as const satisfies Record<ContractName, Partial<Record<DeployedChainId, Address>>>
 
@@ -32,7 +33,7 @@ export type BlockchainExplorer = typeof explorerNames[number];
 export const defaultBlockchainExplorer: BlockchainExplorer = explorerNames[1];
 export const blockchainExplorerUrl = {
     Blockscout: {
-        1: "https://www.blockscout.com/" as string,
+        1: "https://eth.blockscout.com/" as string,
         11155111: "https://eth-sepolia.blockscout.com/" as string,
     },
     Etherscan: {
@@ -40,5 +41,3 @@ export const blockchainExplorerUrl = {
         11155111: "https://sepolia.etherscan.io/" as string,
     }
 } as const satisfies Record<BlockchainExplorer, Partial<Record<DeployedChainId, string>>>
-
-export const TOKEN_DECIMALS = 2; // TODO: change if needed

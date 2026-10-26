@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {formatUnits} from "viem";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleNotch} from '@fortawesome/free-solid-svg-icons';
-import {currencySymbolSVG, decimals} from "@site/src/constants";
+import {currencySymbolSVG, TOKEN_DECIMALS} from "@site/src/constants";
 
 import {useReadBillsOfExchangeTotalSupply} from "../../../generated";
 
@@ -26,7 +26,7 @@ export default function TotalSupplyBoE(props: {}){
         setIsWorking(true);
         try {
             const { data: raw } = await refetch();
-            const formatted = formatUnits(raw as bigint, /* token decimals, e.g. */ decimals);
+            const formatted = formatUnits(raw as bigint, TOKEN_DECIMALS);
             setTotalSupply(formatted);
         } catch (error) {
             console.error(error);

@@ -11,31 +11,10 @@ import {
 
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const billsOfExchangeAbi = [
-  {
-    type: 'constructor',
-    inputs: [
-      {
-        name: '_draweeEthereumAddress',
-        internalType: 'address',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  { type: 'error', inputs: [], name: 'ECDSAInvalidSignature' },
-  {
-    type: 'error',
-    inputs: [{ name: 'length', internalType: 'uint256', type: 'uint256' }],
-    name: 'ECDSAInvalidSignatureLength',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 's', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'ECDSAInvalidSignatureS',
-  },
+  { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
   {
     type: 'error',
     inputs: [
@@ -110,48 +89,17 @@ export const billsOfExchangeAbi = [
     name: 'ERC20InvalidSpender',
   },
   {
-    type: 'error',
-    inputs: [{ name: 'deadline', internalType: 'uint256', type: 'uint256' }],
-    name: 'ERC2612ExpiredSignature',
-  },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'signer', internalType: 'address', type: 'address' },
-      { name: 'owner', internalType: 'address', type: 'address' },
-    ],
-    name: 'ERC2612InvalidSigner',
-  },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'account', internalType: 'address', type: 'address' },
-      { name: 'currentNonce', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'InvalidAccountNonce',
-  },
-  { type: 'error', inputs: [], name: 'InvalidShortString' },
-  {
-    type: 'error',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'OwnableInvalidOwner',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
-    name: 'OwnableUnauthorizedAccount',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'str', internalType: 'string', type: 'string' }],
-    name: 'StringTooLong',
-  },
-  {
     type: 'event',
     anonymous: false,
     inputs: [
       {
-        name: 'acceptedOnUnixTime',
+        name: 'holder',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'amount',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
@@ -184,25 +132,37 @@ export const billsOfExchangeAbi = [
     ],
     name: 'Approval',
   },
-  { type: 'event', anonymous: false, inputs: [], name: 'EIP712DomainChanged' },
   {
     type: 'event',
     anonymous: false,
     inputs: [
       {
-        name: 'previousOwner',
+        name: 'holder',
         internalType: 'address',
         type: 'address',
         indexed: true,
       },
       {
-        name: 'newOwner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
       },
     ],
-    name: 'OwnershipTransferred',
+    name: 'BurnOfUnaccepted',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Draw',
   },
   {
     type: 'event',
@@ -220,25 +180,121 @@ export const billsOfExchangeAbi = [
     name: 'Transfer',
   },
   {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'TransferOfUnaccepted',
+  },
+  { type: 'fallback', stateMutability: 'payable' },
+  {
     type: 'function',
     inputs: [],
-    name: 'DOMAIN_SEPARATOR',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'CONTRACT_VERSION',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [],
+    name: 'CURRENCY',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'DESCRIPTION',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'DRAWEE_ETH_ADDRESS',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'DRAWEE_NAME',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'DRAWER_ETH_ADDRESS',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'DRAWER_NAME',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'KYC_AND_AML_NOTICE',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'LEGAL_SIGNATURE_STATEMENT',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ORDER',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'SUM_PER_BILL',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'TIME_OF_PAYMENT',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
     name: 'accept',
-    outputs: [{ name: 'success', internalType: 'bool', type: 'bool' }],
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'acceptedOnUnixTime',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
+    inputs: [
+      { name: 'holder', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'acceptOn',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -290,6 +346,13 @@ export const billsOfExchangeAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
+    name: 'balanceOfUnaccepted',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'value', internalType: 'uint256', type: 'uint256' }],
     name: 'burn',
     outputs: [],
@@ -307,144 +370,30 @@ export const billsOfExchangeAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'currency',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'burnOfUnaccepted',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [],
     name: 'decimals',
     outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
-    stateMutability: 'view',
+    stateMutability: 'pure',
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'description',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'drawee',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'draweeEthereumAddress',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'drawer',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'drawerEthereumAddress',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'eip712Domain',
-    outputs: [
-      { name: 'fields', internalType: 'bytes1', type: 'bytes1' },
-      { name: 'name', internalType: 'string', type: 'string' },
-      { name: 'version', internalType: 'string', type: 'string' },
-      { name: 'chainId', internalType: 'uint256', type: 'uint256' },
-      { name: 'verifyingContract', internalType: 'address', type: 'address' },
-      { name: 'salt', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'extensions', internalType: 'uint256[]', type: 'uint256[]' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'issuedOnUnixTime',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'draw',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [],
     name: 'name',
     outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'nonces',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'order',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'owner', internalType: 'address', type: 'address' },
-      { name: 'spender', internalType: 'address', type: 'address' },
-      { name: 'value', internalType: 'uint256', type: 'uint256' },
-      { name: 'deadline', internalType: 'uint256', type: 'uint256' },
-      { name: 'v', internalType: 'uint8', type: 'uint8' },
-      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
-      { name: 's', internalType: 'bytes32', type: 'bytes32' },
-    ],
-    name: 'permit',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'placeWherePaymentIsToBeMade',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'placeWhereTheBillIsIssued',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'renounceOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'sumToBePaidForEveryToken',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -464,14 +413,14 @@ export const billsOfExchangeAbi = [
   {
     type: 'function',
     inputs: [],
-    name: 'timeOfPayment',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    name: 'totalSupply',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [],
-    name: 'totalSupply',
+    name: 'totalSupplyOfUnaccepted',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -542,25 +491,29 @@ export const billsOfExchangeAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
-    name: 'transferOwnership',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'transferOfUnaccepted',
     outputs: [],
     stateMutability: 'nonpayable',
   },
+  { type: 'receive', stateMutability: 'payable' },
 ] as const
 
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const billsOfExchangeAddress = {
   1: '0x0000000000000000000000000000000000000000',
-  11155111: '0xDd5D36c9cCe7893EbFC35c4390511281cAb3Da85',
+  11155111: '0x1Cb4B349C67cda9B28358cE7C6Ed2fa1761c2224',
 } as const
 
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const billsOfExchangeConfig = {
   address: billsOfExchangeAddress,
@@ -575,7 +528,7 @@ export const billsOfExchangeConfig = {
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchange = /*#__PURE__*/ createUseReadContract({
   abi: billsOfExchangeAbi,
@@ -583,36 +536,165 @@ export const useReadBillsOfExchange = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"DOMAIN_SEPARATOR"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"CONTRACT_VERSION"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useReadBillsOfExchangeDomainSeparator =
+export const useReadBillsOfExchangeContractVersion =
   /*#__PURE__*/ createUseReadContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'DOMAIN_SEPARATOR',
+    functionName: 'CONTRACT_VERSION',
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"acceptedOnUnixTime"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"CURRENCY"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useReadBillsOfExchangeAcceptedOnUnixTime =
+export const useReadBillsOfExchangeCurrency =
   /*#__PURE__*/ createUseReadContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'acceptedOnUnixTime',
+    functionName: 'CURRENCY',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"DESCRIPTION"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeDescription =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'DESCRIPTION',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"DRAWEE_ETH_ADDRESS"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeDraweeEthAddress =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'DRAWEE_ETH_ADDRESS',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"DRAWEE_NAME"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeDraweeName =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'DRAWEE_NAME',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"DRAWER_ETH_ADDRESS"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeDrawerEthAddress =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'DRAWER_ETH_ADDRESS',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"DRAWER_NAME"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeDrawerName =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'DRAWER_NAME',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"KYC_AND_AML_NOTICE"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeKycAndAmlNotice =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'KYC_AND_AML_NOTICE',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"LEGAL_SIGNATURE_STATEMENT"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeLegalSignatureStatement =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'LEGAL_SIGNATURE_STATEMENT',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"ORDER"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeOrder = /*#__PURE__*/ createUseReadContract({
+  abi: billsOfExchangeAbi,
+  address: billsOfExchangeAddress,
+  functionName: 'ORDER',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"SUM_PER_BILL"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeSumPerBill =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'SUM_PER_BILL',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"TIME_OF_PAYMENT"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeTimeOfPayment =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'TIME_OF_PAYMENT',
   })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"allowance"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeAllowance =
   /*#__PURE__*/ createUseReadContract({
@@ -625,7 +707,7 @@ export const useReadBillsOfExchangeAllowance =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"balanceOf"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeBalanceOf =
   /*#__PURE__*/ createUseReadContract({
@@ -635,23 +717,23 @@ export const useReadBillsOfExchangeBalanceOf =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"currency"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"balanceOfUnaccepted"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useReadBillsOfExchangeCurrency =
+export const useReadBillsOfExchangeBalanceOfUnaccepted =
   /*#__PURE__*/ createUseReadContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'currency',
+    functionName: 'balanceOfUnaccepted',
   })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"decimals"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeDecimals =
   /*#__PURE__*/ createUseReadContract({
@@ -661,103 +743,10 @@ export const useReadBillsOfExchangeDecimals =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"description"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeDescription =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'description',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"drawee"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeDrawee = /*#__PURE__*/ createUseReadContract(
-  {
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'drawee',
-  },
-)
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"draweeEthereumAddress"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeDraweeEthereumAddress =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'draweeEthereumAddress',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"drawer"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeDrawer = /*#__PURE__*/ createUseReadContract(
-  {
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'drawer',
-  },
-)
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"drawerEthereumAddress"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeDrawerEthereumAddress =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'drawerEthereumAddress',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"eip712Domain"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeEip712Domain =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'eip712Domain',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"issuedOnUnixTime"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeIssuedOnUnixTime =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'issuedOnUnixTime',
-  })
-
-/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"name"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeName = /*#__PURE__*/ createUseReadContract({
   abi: billsOfExchangeAbi,
@@ -766,87 +755,10 @@ export const useReadBillsOfExchangeName = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"nonces"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeNonces = /*#__PURE__*/ createUseReadContract(
-  {
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'nonces',
-  },
-)
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"order"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeOrder = /*#__PURE__*/ createUseReadContract({
-  abi: billsOfExchangeAbi,
-  address: billsOfExchangeAddress,
-  functionName: 'order',
-})
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"owner"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeOwner = /*#__PURE__*/ createUseReadContract({
-  abi: billsOfExchangeAbi,
-  address: billsOfExchangeAddress,
-  functionName: 'owner',
-})
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"placeWherePaymentIsToBeMade"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangePlaceWherePaymentIsToBeMade =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'placeWherePaymentIsToBeMade',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"placeWhereTheBillIsIssued"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangePlaceWhereTheBillIsIssued =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'placeWhereTheBillIsIssued',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"sumToBePaidForEveryToken"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeSumToBePaidForEveryToken =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'sumToBePaidForEveryToken',
-  })
-
-/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"supportsInterface"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeSupportsInterface =
   /*#__PURE__*/ createUseReadContract({
@@ -859,7 +771,7 @@ export const useReadBillsOfExchangeSupportsInterface =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"symbol"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeSymbol = /*#__PURE__*/ createUseReadContract(
   {
@@ -870,23 +782,10 @@ export const useReadBillsOfExchangeSymbol = /*#__PURE__*/ createUseReadContract(
 )
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"timeOfPayment"`
- *
- * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
- */
-export const useReadBillsOfExchangeTimeOfPayment =
-  /*#__PURE__*/ createUseReadContract({
-    abi: billsOfExchangeAbi,
-    address: billsOfExchangeAddress,
-    functionName: 'timeOfPayment',
-  })
-
-/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"totalSupply"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useReadBillsOfExchangeTotalSupply =
   /*#__PURE__*/ createUseReadContract({
@@ -896,10 +795,23 @@ export const useReadBillsOfExchangeTotalSupply =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"totalSupplyOfUnaccepted"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useReadBillsOfExchangeTotalSupplyOfUnaccepted =
+  /*#__PURE__*/ createUseReadContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'totalSupplyOfUnaccepted',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchange = /*#__PURE__*/ createUseWriteContract({
   abi: billsOfExchangeAbi,
@@ -910,7 +822,7 @@ export const useWriteBillsOfExchange = /*#__PURE__*/ createUseWriteContract({
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"accept"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeAccept =
   /*#__PURE__*/ createUseWriteContract({
@@ -920,10 +832,23 @@ export const useWriteBillsOfExchangeAccept =
   })
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"acceptOn"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useWriteBillsOfExchangeAcceptOn =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'acceptOn',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"approve"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeApprove =
   /*#__PURE__*/ createUseWriteContract({
@@ -936,7 +861,7 @@ export const useWriteBillsOfExchangeApprove =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"approveAndCall"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeApproveAndCall =
   /*#__PURE__*/ createUseWriteContract({
@@ -949,7 +874,7 @@ export const useWriteBillsOfExchangeApproveAndCall =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"burn"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeBurn = /*#__PURE__*/ createUseWriteContract(
   {
@@ -963,7 +888,7 @@ export const useWriteBillsOfExchangeBurn = /*#__PURE__*/ createUseWriteContract(
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"burnFrom"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeBurnFrom =
   /*#__PURE__*/ createUseWriteContract({
@@ -973,36 +898,37 @@ export const useWriteBillsOfExchangeBurnFrom =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"permit"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"burnOfUnaccepted"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useWriteBillsOfExchangePermit =
+export const useWriteBillsOfExchangeBurnOfUnaccepted =
   /*#__PURE__*/ createUseWriteContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'permit',
+    functionName: 'burnOfUnaccepted',
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"renounceOwnership"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"draw"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useWriteBillsOfExchangeRenounceOwnership =
-  /*#__PURE__*/ createUseWriteContract({
+export const useWriteBillsOfExchangeDraw = /*#__PURE__*/ createUseWriteContract(
+  {
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'renounceOwnership',
-  })
+    functionName: 'draw',
+  },
+)
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transfer"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeTransfer =
   /*#__PURE__*/ createUseWriteContract({
@@ -1015,7 +941,7 @@ export const useWriteBillsOfExchangeTransfer =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferAndCall"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeTransferAndCall =
   /*#__PURE__*/ createUseWriteContract({
@@ -1028,7 +954,7 @@ export const useWriteBillsOfExchangeTransferAndCall =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferFrom"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeTransferFrom =
   /*#__PURE__*/ createUseWriteContract({
@@ -1041,7 +967,7 @@ export const useWriteBillsOfExchangeTransferFrom =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferFromAndCall"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWriteBillsOfExchangeTransferFromAndCall =
   /*#__PURE__*/ createUseWriteContract({
@@ -1051,23 +977,23 @@ export const useWriteBillsOfExchangeTransferFromAndCall =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferOwnership"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferOfUnaccepted"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useWriteBillsOfExchangeTransferOwnership =
+export const useWriteBillsOfExchangeTransferOfUnaccepted =
   /*#__PURE__*/ createUseWriteContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'transferOwnership',
+    functionName: 'transferOfUnaccepted',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchange =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1079,7 +1005,7 @@ export const useSimulateBillsOfExchange =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"accept"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeAccept =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1089,10 +1015,23 @@ export const useSimulateBillsOfExchangeAccept =
   })
 
 /**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"acceptOn"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useSimulateBillsOfExchangeAcceptOn =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    functionName: 'acceptOn',
+  })
+
+/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"approve"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeApprove =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1105,7 +1044,7 @@ export const useSimulateBillsOfExchangeApprove =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"approveAndCall"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeApproveAndCall =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1118,7 +1057,7 @@ export const useSimulateBillsOfExchangeApproveAndCall =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"burn"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeBurn =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1131,7 +1070,7 @@ export const useSimulateBillsOfExchangeBurn =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"burnFrom"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeBurnFrom =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1141,36 +1080,36 @@ export const useSimulateBillsOfExchangeBurnFrom =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"permit"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"burnOfUnaccepted"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useSimulateBillsOfExchangePermit =
+export const useSimulateBillsOfExchangeBurnOfUnaccepted =
   /*#__PURE__*/ createUseSimulateContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'permit',
+    functionName: 'burnOfUnaccepted',
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"renounceOwnership"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"draw"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useSimulateBillsOfExchangeRenounceOwnership =
+export const useSimulateBillsOfExchangeDraw =
   /*#__PURE__*/ createUseSimulateContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'renounceOwnership',
+    functionName: 'draw',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transfer"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeTransfer =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1183,7 +1122,7 @@ export const useSimulateBillsOfExchangeTransfer =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferAndCall"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeTransferAndCall =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1196,7 +1135,7 @@ export const useSimulateBillsOfExchangeTransferAndCall =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferFrom"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeTransferFrom =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1209,7 +1148,7 @@ export const useSimulateBillsOfExchangeTransferFrom =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferFromAndCall"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useSimulateBillsOfExchangeTransferFromAndCall =
   /*#__PURE__*/ createUseSimulateContract({
@@ -1219,23 +1158,23 @@ export const useSimulateBillsOfExchangeTransferFromAndCall =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferOwnership"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `functionName` set to `"transferOfUnaccepted"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useSimulateBillsOfExchangeTransferOwnership =
+export const useSimulateBillsOfExchangeTransferOfUnaccepted =
   /*#__PURE__*/ createUseSimulateContract({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    functionName: 'transferOwnership',
+    functionName: 'transferOfUnaccepted',
   })
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWatchBillsOfExchangeEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
@@ -1247,7 +1186,7 @@ export const useWatchBillsOfExchangeEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"Acceptance"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWatchBillsOfExchangeAcceptanceEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
@@ -1260,7 +1199,7 @@ export const useWatchBillsOfExchangeAcceptanceEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"Approval"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWatchBillsOfExchangeApprovalEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
@@ -1270,40 +1209,53 @@ export const useWatchBillsOfExchangeApprovalEvent =
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"EIP712DomainChanged"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"BurnOfUnaccepted"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useWatchBillsOfExchangeEip712DomainChangedEvent =
+export const useWatchBillsOfExchangeBurnOfUnacceptedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    eventName: 'EIP712DomainChanged',
+    eventName: 'BurnOfUnaccepted',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"Draw"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
-export const useWatchBillsOfExchangeOwnershipTransferredEvent =
+export const useWatchBillsOfExchangeDrawEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
-    eventName: 'OwnershipTransferred',
+    eventName: 'Draw',
   })
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"Transfer"`
  *
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
- * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xdd5d36c9cce7893ebfc35c4390511281cab3da85)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
  */
 export const useWatchBillsOfExchangeTransferEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: billsOfExchangeAbi,
     address: billsOfExchangeAddress,
     eventName: 'Transfer',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link billsOfExchangeAbi}__ and `eventName` set to `"TransferOfUnaccepted"`
+ *
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224)
+ */
+export const useWatchBillsOfExchangeTransferOfUnacceptedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: billsOfExchangeAbi,
+    address: billsOfExchangeAddress,
+    eventName: 'TransferOfUnaccepted',
   })
