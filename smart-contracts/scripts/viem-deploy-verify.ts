@@ -29,6 +29,16 @@ const DEPLOYMENTS_DIRECTORY = "./deployments";
 
 const VERIFICATION_PROVIDERS = ["etherscan", "blockscout"] as const;
 
+// Public explorer APIs rate-limit bursts of requests (HTTP 429): retry a few times before giving up.
+const VERIFICATION_ATTEMPTS = 3;
+const RATE_LIMIT_BACKOFF_MS = 20_000;
+
+// Blockscout also takes verified sources from the shared Verifier Alliance database (which
+// Sourcify feeds), so a contract may become fully verified there even when our own submission
+// keeps hitting HTTP 429. Before reporting a failure, ask Blockscout for the contract's status.
+const BLOCKSCOUT_STATUS_CHECKS = 3;
+const BLOCKSCOUT_STATUS_INTERVAL_MS = 15_000;
+
 async function main(): Promise<void> {
     const networkConnection = await hre.network.connect();
     const {networkName} = networkConnection;
@@ -78,7 +88,7 @@ async function main(): Promise<void> {
         time: new Date().toISOString(),
     });
 
-    const failedProviders = await verifyOnExplorers(contractAddress);
+    const failedProviders = await verifyOnExplorers(publicClient.chain.id, contractAddress);
     if (failedProviders.length > 0) {
         // The deployment itself succeeded; the address is printed above and saved in the record.
         throw new Error(`Source verification failed on: ${failedProviders.join(", ")}`);
@@ -95,23 +105,81 @@ function saveDeploymentRecord(record: Record<string, string | number>): void {
 }
 
 /** Tries every provider, even after a failure, and returns the names of those that failed. */
-async function verifyOnExplorers(contractAddress: string): Promise<string[]> {
+async function verifyOnExplorers(chainId: number, contractAddress: string): Promise<string[]> {
     const failedProviders: string[] = [];
     for (const provider of VERIFICATION_PROVIDERS) {
+        if (await verifyOnExplorerWithRetries(contractAddress, provider)) {
+            continue;
+        }
+        if (provider === "blockscout" && await isFullyVerifiedOnBlockscout(chainId, contractAddress)) {
+            console.log("✅ Our submission to Blockscout failed, but Blockscout already shows the contract " +
+                "as fully verified (it obtained the sources from the shared database).");
+            continue;
+        }
+        failedProviders.push(provider);
+    }
+    return failedProviders;
+}
+
+async function verifyOnExplorerWithRetries(
+    contractAddress: string,
+    provider: (typeof VERIFICATION_PROVIDERS)[number],
+): Promise<boolean> {
+    for (let attempt = 1; attempt <= VERIFICATION_ATTEMPTS; attempt++) {
         try {
-            const isVerified = await verifyContract(
+            return await verifyContract(
                 {contract: FULLY_QUALIFIED_CONTRACT_NAME, address: contractAddress, constructorArgs: [], provider},
                 hre,
             );
-            if (!isVerified) {
-                failedProviders.push(provider);
-            }
         } catch (error: unknown) {
-            console.error(`❌ ${provider} verification error:`, error instanceof Error ? error.message : error);
-            failedProviders.push(provider);
+            const message = error instanceof Error ? error.message : String(error);
+            const isRateLimited = message.includes("429");
+            if (!isRateLimited || attempt === VERIFICATION_ATTEMPTS) {
+                console.error(`❌ ${provider} verification error:`, message);
+                return false;
+            }
+            console.log(`⏳ ${provider} rate-limited the request; retrying in ${RATE_LIMIT_BACKOFF_MS / 1000} s ` +
+                `(attempt ${attempt + 1} of ${VERIFICATION_ATTEMPTS})`);
+            await sleep(RATE_LIMIT_BACKOFF_MS);
         }
     }
-    return failedProviders;
+    return false;
+}
+
+/** A partial match does not count: only `is_fully_verified` means the sources match exactly. */
+async function isFullyVerifiedOnBlockscout(chainId: number, contractAddress: string): Promise<boolean> {
+    const blockscout = hre.config.chainDescriptors.get(BigInt(chainId))?.blockExplorers.blockscout;
+    if (blockscout === undefined) {
+        console.error(`❌ No Blockscout explorer is known for chain ${chainId}.`);
+        return false;
+    }
+    const statusUrl = `${blockscout.url}/api/v2/smart-contracts/${contractAddress}`;
+
+    // The import from the shared database may lag behind, so check a few times before giving up.
+    for (let check = 1; check <= BLOCKSCOUT_STATUS_CHECKS; check++) {
+        console.log(`⏳ Checking the contract's status on Blockscout (check ${check} of ${BLOCKSCOUT_STATUS_CHECKS})`);
+        try {
+            const response = await fetch(statusUrl);
+            if (response.ok) {
+                const status = (await response.json()) as { is_fully_verified?: boolean };
+                if (status.is_fully_verified === true) {
+                    return true;
+                }
+            } else {
+                console.log(`   Blockscout answered HTTP ${response.status}.`);
+            }
+        } catch (error: unknown) {
+            console.error("   Blockscout status request failed:", error instanceof Error ? error.message : error);
+        }
+        if (check < BLOCKSCOUT_STATUS_CHECKS) {
+            await sleep(BLOCKSCOUT_STATUS_INTERVAL_MS);
+        }
+    }
+    return false;
+}
+
+function sleep(milliseconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 main().catch((error: unknown) => {

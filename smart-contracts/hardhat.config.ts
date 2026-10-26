@@ -10,12 +10,15 @@ const config: HardhatUserConfig = {
         hardhatVerify
     ],
     solidity: {
+        // Compile Solidity tests in a separate job: otherwise test-only remappings (forge-std)
+        // end up in the contracts' metadata, and Sourcify/Blockscout report only a partial match.
+        splitTestsCompilation: true,
         profiles: {
             default: {
                 //   version: "0.8.28", // << keep only one profile, for verification to work
                 // },
                 // production: {
-                version: "0.8.38",
+                version: "0.8.36",
                 settings: {
                     optimizer: {
                         enabled: true,

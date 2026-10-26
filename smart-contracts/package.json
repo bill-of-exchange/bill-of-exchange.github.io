@@ -6,7 +6,7 @@
     "@nomicfoundation/hardhat-ignition": "^3.0.3",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
     "@types/node": "^22.18.1",
-    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "forge-std": "github:foundry-rs/forge-std#v1.17.0",
     "hardhat": "^3.0.6",
     "prettier": "^3.7.1",
     "prettier-plugin-solidity": "^2.2.0",

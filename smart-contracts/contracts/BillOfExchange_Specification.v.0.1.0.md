@@ -69,6 +69,9 @@ The relevant parties under the bill of exchange model are:
 * **Bearer / Holder**
   The bearer (in the sense of a bearer bill in *lex cambiaria*) is the person (natural or legal) who owns the Ethereum address that currently holds the relevant token balance. This person may be different from the person operating the private key in fact (e.g. custodial arrangements), but on-chain the address is the technical representation of possession.
 
+* **Demonstration deployments**
+  In demonstration deployments (e.g. on the Sepolia test network) `DRAWER_ETH_ADDRESS` and `DRAWEE_ETH_ADDRESS` may be the same address, so that one wallet can draw and accept. Under [BoEA 1882 s.5(2)](https://www.legislation.gov.uk/ukpga/Vict/45-46/61/section/5), where drawer and drawee are the same person, the holder may treat the instrument, at his option, either as a bill of exchange or as a promissory note. Test networks are never valid registries for real bills of exchange (see `DESCRIPTION`).
+
 ### 1.3 Dual Liability and Two Ledgers
 
 Under the [UK Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61), the legal status of a bill changes when it is accepted:
@@ -117,8 +120,10 @@ This is not a waiver of KYC/AML obligations; it clarifies the relationship betwe
 * Target Solidity version in this contract:
 
   ```solidity
-  pragma solidity 0.8.38;
+  pragma solidity 0.8.36;
   ```
+
+* 0.8.36 is the newest compiler version supported for source verification by both Etherscan and Blockscout at the time of the first (Sepolia) deployment; 0.8.37 and 0.8.38 were not yet supported by Blockscout.
 
 [//]: # (* This aligns with [OpenZeppelin Contracts v5.4.0]&#40;https://github.com/OpenZeppelin/openzeppelin-contracts&#41;, which also use `^0.8.20`.)
 
@@ -438,6 +443,18 @@ Acceptance moves bills from the Unaccepted Bills Ledger to the Accepted Bills Le
     * The drawee, by calling this function from `DRAWEE_ETH_ADDRESS`, accepts the specified number of bills.
     * The legal status of these bills changes from unaccepted (drawer liability only) to accepted (drawee primary liability).
     * No new bills are created; the number of bills in existence does not increase. Only their ledger and legal status change.
+
+#### 4.5.3 Why acceptance emits no `Transfer` event: rationale and accepted cost
+
+*Acceptance changes the state of a bill, not the set of bills.*
+
+* **Legal rationale.** A bill on the Unaccepted Ledger and the same bill on the Accepted Ledger are one and the same instrument; acceptance (BoEA 1882 s.17) is an act done *on* an existing bill, not the issue of a new one. Under [ETDA 2023 s.2(2)](https://www.legislation.gov.uk/ukpga/2023/38/section/2), an electronic trade document comprises the information "together with any other information with which it is logically associated". Event logs emitted by this contract are arguably such logically associated information. An ERC-20 `Transfer` event from the zero address would therefore record, on the instrument itself, a statement that something was created at acceptance — the very proposition the legal model denies.
+* **Standard compliance.** [EIP-20](https://eips.ethereum.org/EIPS/eip-20) says a contract that creates tokens *SHOULD* (not *MUST*) emit `Transfer` from `0x0`. The deviation is therefore permitted, and it is made deliberately.
+* **Accepted interoperability cost.**
+    * Wallets are unaffected: they read `balanceOf` directly.
+    * Tools that reconstruct balances from event logs (block-explorer holder lists, subgraph-style indexers) will not see bills entering the Accepted Ledger. Because burning accepted bills emits `Transfer(holder, 0x0)` through `ERC20Burnable`, such tools may even display negative balances.
+    * This asymmetry is consistent with the model: burning destroys a bill (a destruction signal is legally accurate), whereas acceptance creates none (a creation signal would be legally false).
+* **Mitigation.** Indexers should treat the custom `Acceptance(holder, amount)` event as the credit entry of the Accepted Ledger.
 
 ### 4.6 Accepted Bills: Standard ERC-20 and ERC-1363 Functions
 

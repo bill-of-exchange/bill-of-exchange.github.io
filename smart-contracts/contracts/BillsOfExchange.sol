@@ -40,7 +40,7 @@
 // This contract requires forked OpenZeppelin ERC20 v5.4.0 with _balances and
 // _totalSupply changed from private to internal. See libs/ERC20.sol.
 
-pragma solidity 0.8.38;
+pragma solidity 0.8.36;
 
 import "./libs/ERC20.sol";           // Fork of OpenZeppelin ERC20 v5.4.0 (internal _balances/_totalSupply)
 import "./libs/ERC20Burnable.sol";   // Fork of OpenZeppelin ERC20Burnable v5.4.0 using forked ERC20
@@ -53,16 +53,27 @@ import "./libs/ERC1363.sol";         // Fork of ERC1363 implementation using for
 contract BillsOfExchange is ERC20, ERC20Burnable, ERC1363 {
 
     // =========================================================================
+    // VERSIONING
+    // =========================================================================
+
+    /// @notice Semantic version of this contract (see specification §3.1).
+    string public constant CONTRACT_VERSION = "0.1.0";
+
+    // =========================================================================
     // PARTY ADDRESSES
     // =========================================================================
+    // Demonstration deployment (Sepolia): drawer and drawee are the same address,
+    // so one wallet can draw, accept and deploy. Under BoEA 1882 s.5(2), where
+    // drawer and drawee are the same person, the holder may treat the instrument
+    // either as a bill of exchange or as a promissory note.
 
     /// @notice Ethereum address authorized to draw (issue) new bills.
     /// @custom:deployment MUST be replaced with actual drawer address.
-    address public constant DRAWER_ETH_ADDRESS = 0x000000000000000000000000000000000000d0c0;
+    address public constant DRAWER_ETH_ADDRESS = 0xEf43DdEfa9Ff4466583Fe3158b4d6161c2a427AA;
 
     /// @notice Ethereum address authorized to accept bills.
     /// @custom:deployment MUST be replaced with actual drawee address.
-    address public constant DRAWEE_ETH_ADDRESS = 0x000000000000000000000000000000000000dA0E;
+    address public constant DRAWEE_ETH_ADDRESS = 0xEf43DdEfa9Ff4466583Fe3158b4d6161c2a427AA;
 
     // =========================================================================
     // LEGAL DESCRIPTORS

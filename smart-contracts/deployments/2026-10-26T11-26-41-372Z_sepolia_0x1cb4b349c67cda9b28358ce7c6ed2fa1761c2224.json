@@ -1,0 +1,10 @@
+{
+  "contractName": "BillsOfExchange",
+  "networkName": "sepolia",
+  "chainId": 11155111,
+  "contractAddress": "0x1cb4b349c67cda9b28358ce7c6ed2fa1761c2224",
+  "deploymentTx": "0x272004b4f5d9410ba5e423c42ca65886a85073b943ee793be1eae8e90d031c4a",
+  "blockNumber": "11997674",
+  "deployer": "0xef43ddefa9ff4466583fe3158b4d6161c2a427aa",
+  "time": "2026-10-26T11:26:41.372Z"
+}
