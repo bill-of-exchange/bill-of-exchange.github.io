@@ -1,0 +1,39 @@
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.figure {
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: var(--ifm-background-surface-color);
+    border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.title {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ifm-color-emphasis-700);
+}
+
+.value {
+    margin-top: 4px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.count {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--ifm-color-emphasis-700);
+}
+
+.note {
+    margin-top: 2px;
+    font-size: 0.9rem;
+    color: var(--ifm-color-emphasis-700);
+}

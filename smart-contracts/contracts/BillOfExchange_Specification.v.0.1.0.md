@@ -271,6 +271,27 @@ Accepted bills use the standard ERC-20 internal storage:
     * plus ERC-1363 functions such as `transferAndCall`, etc.
     * plus burn functions from `ERC20Burnable` for accepted bills.
 
+### 3.6 Stable Interface for Displaying the Bill
+
+The project website renders a bill, and the statements recorded with it, directly from the contract. It keeps no copy of the terms of its own, so what a user sees is always what the registry says; switching networks or redeploying the contract changes the picture accordingly.
+
+The public getters below therefore form a stable interface. Every future version of the contract must keep them with the same names, types and meaning. New getters may be added; these may not be renamed, removed or retyped without a coordinated change of the website and a new `CONTRACT_VERSION` (§3.1).
+
+| Getter | Type | Shown as |
+|---|---|---|
+| `DRAWER_NAME` | `string` | the drawer: the person giving the order |
+| `DRAWEE_NAME` | `string` | the drawee: the person to whom the order is addressed |
+| `ORDER` | `string` | the order to pay |
+| `SUM_PER_BILL`, `CURRENCY` | `string`, `string` (ISO 4217) | the sum certain in money |
+| `TIME_OF_PAYMENT` | `string` | the time of payment |
+| `DRAWER_ETH_ADDRESS` | `address` | the drawer's electronic signature (BoEA 1882 s.3(1): "signed by the person giving it") |
+| `DRAWEE_ETH_ADDRESS` | `address` | the drawee's signature on the acceptance (BoEA 1882 s.17(2)(a)) |
+| `LEGAL_SIGNATURE_STATEMENT`, `DESCRIPTION`, `KYC_AND_AML_NOTICE` | `string` | statements recorded with every bill, shown next to it as contract text (an electronic bill has no reverse side) |
+| `CONTRACT_VERSION` | `string` | the version of the instrument's code |
+| `decimals()`, `totalSupply()`, `totalSupplyOfUnaccepted()` | `uint8`, `uint256`, `uint256` | the number of bills and their sum in the registry summary |
+
+A deployment on a test network is shown with a "SPECIMEN — TESTNET" watermark, in line with `DESCRIPTION`: test networks are not valid registries for real bills of exchange.
+
 ---
 
 ## 4. Functions

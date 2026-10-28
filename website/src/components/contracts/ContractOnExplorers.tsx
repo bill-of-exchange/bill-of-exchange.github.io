@@ -1,7 +1,6 @@
 import React, {useMemo} from "react";
-import {useAccount} from 'wagmi';
-import {blockchainExplorerUrl, ContractName, DeployedChainId, deployments, isDeployedChainId} from "@site/src/constants";
-import {chains} from "@site/src/wagmiConfig";
+import {blockchainExplorerUrl, ContractName} from "@site/src/constants";
+import {useDisplayedContract} from "@site/src/components/contracts/useDisplayedContract";
 import {useColorMode} from '@docusaurus/theme-common';
 import styles from "@site/src/components/contracts/ContractOnExplorers.module.css";
 
@@ -13,24 +12,10 @@ export default function ContractOnExplorers(props: ContractOnExplorersProps){
 
     const { colorMode, setColorMode } = useColorMode();
 
-    const { address, chain, chainId, status } = useAccount();
-
-    const {contractAddress, blockscoutLink, etherscanLink} = useMemo(() => {
-
-        // Without a connected wallet, or with a wallet on a chain we have not deployed to,
-        // show the contract on wagmi's default chain (the first in `chains`): Sepolia while
-        // `mode` is 'dev'. The address and both explorer links must use the same chain.
-        const explorerChainId: DeployedChainId = isDeployedChainId(chainId)
-            ? chainId
-            : chains[0].id as DeployedChainId;
-
-        const contractAddress = deployments[props.contractName][explorerChainId];
-        const blockscoutLink = `${blockchainExplorerUrl.Blockscout[explorerChainId]}address/${contractAddress}`;
-        const etherscanLink = `${blockchainExplorerUrl.Etherscan[explorerChainId]}address/${contractAddress}`;
-
-        return {contractAddress,blockscoutLink,etherscanLink};
-
-    }, [chainId, props.contractName]);
+    // The address and both explorer links come from the chain the whole page shows.
+    const {chainId, address: contractAddress} = useDisplayedContract(props.contractName);
+    const blockscoutLink = `${blockchainExplorerUrl.Blockscout[chainId]}address/${contractAddress}`;
+    const etherscanLink = `${blockchainExplorerUrl.Etherscan[chainId]}address/${contractAddress}`;
 
     const {etherscanLogo, blockscoutLogo} = useMemo(() => {
 

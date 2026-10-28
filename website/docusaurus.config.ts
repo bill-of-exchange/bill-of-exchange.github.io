@@ -4,8 +4,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-// Wallet libraries pulled in by wagmi import optional packages that only features this site
-// never uses would need. The bundler fails (or warns) on such imports when the packages are
+// Wallet libraries pulled in by wagmi import optional packages needed only by features this site
+// never uses. The bundler fails (or warns) on such imports when the packages are
 // not installed, so they are resolved to an empty module instead of being shipped:
 // - `pino-pretty`: an optional `require` in `pino` (via @walletconnect/logger), reached only
 //   when pretty-printed logging is enabled, which nothing here does;
@@ -33,7 +33,8 @@ const config: Config = {
     },
 
     // Set the production url of your site here
-    url: 'https://bill-of-exchange.github.io',
+    // The custom domain served by GitHub Pages: canonical links, the sitemap and social cards use it.
+    url: 'https://bills-of-exchange.com',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
     baseUrl: '/',
@@ -108,6 +109,10 @@ const config: Config = {
                 },
                 theme: {
                     customCss: './src/css/custom.css',
+                },
+                sitemap: {
+                    // Developer-only pages: see src/pages/playground.tsx.
+                    ignorePatterns: ['/playground/**'],
                 },
             } satisfies Preset.Options,
         ],
@@ -191,7 +196,8 @@ const config: Config = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Viktor Ageyev`,
+            // Rendered as HTML (src/theme/Footer/Copyright), so it may contain a link.
+            copyright: `Copyright © ${new Date().getFullYear()} <a href="https://github.com/ageyev/" target="_blank" rel="noopener noreferrer">Viktor Ageyev</a>`,
         },
         // https://docusaurus.io/docs/markdown-features/code-blocks#theming
         prism: {

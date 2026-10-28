@@ -1,0 +1,8 @@
+{
+  "label": "Smart contract",
+  "position": 1.5,
+  "link": {
+    "type": "generated-index",
+    "description": "How the BillsOfExchange contract works, what each party can do with it, and where it is deployed"
+  }
+}

@@ -5,6 +5,9 @@
 
     "baseUrl": ".",
 
+    // src/constants.ts imports src/deployments.json
+    "resolveJsonModule": true,
+
     // see:
     // https://wagmi.sh/react/typescript
     "strict": true

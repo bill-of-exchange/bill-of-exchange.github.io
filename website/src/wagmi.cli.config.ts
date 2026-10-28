@@ -1,31 +1,25 @@
-
-// this is a config for Wagmi CLI
-// https://wagmi.sh/cli/getting-started
-
-// npx wagmi init
-// creates  wagmi.cli.config.ts, if not exists
-
-// run:
-// npx wagmi generate
-// wagmi generate --config wagmi.cli.config.ts
+// Configuration of the wagmi CLI, which writes src/generated.ts: the typed ABI and React hooks
+// bound to the contract addresses. https://wagmi.sh/cli/getting-started
+//
+// Run through `npm run contracts:sync` (automatically before `npm start` and `npm run build`).
+//
+// The ABI comes from src/deployments.json, that is from the records of actual deployments, never from
+// the Hardhat artifacts: those follow the source code, which may already hold an undeployed version.
 
 import {defineConfig} from '@wagmi/cli';
-import {hardhat, HardhatConfig, react} from '@wagmi/cli/plugins';
-import {deployments} from "@site/src/constants";
-
-const hardhatConfig: HardhatConfig= {
-    project: '../smart-contracts',
-    include: [
-        'contracts/BillsOfExchange.sol/BillsOfExchange.json',
-    ],
-    deployments: deployments,
-};
+import {react} from '@wagmi/cli/plugins';
+import type {Abi} from 'viem';
+import deploymentRecords from './deployments.json';
+import {deployments} from './constants';
 
 export default defineConfig({
     out: 'src/generated.ts',
-    contracts: [],
-    plugins: [
-        hardhat(hardhatConfig),
-        react(),
+    contracts: [
+        {
+            name: 'BillsOfExchange',
+            abi: deploymentRecords.BillsOfExchange.abi as Abi,
+            address: deployments.BillsOfExchange,
+        },
     ],
+    plugins: [react()],
 });

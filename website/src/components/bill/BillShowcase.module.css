@@ -1,0 +1,44 @@
+.showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 32px 0 48px;
+}
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.heading {
+    margin: 0;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.lede {
+    margin: 0;
+    color: var(--ifm-color-emphasis-700);
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+}
+
+.explanations {
+    display: grid;
+    margin-top: -6px;
+}
+
+.explanation {
+    grid-area: 1 / 1;
+    margin: 0;
+    color: var(--ifm-color-emphasis-700);
+}
+
+/* Hidden, but still taking its place in the layout. */
+.concealed {
+    visibility: hidden;
+}

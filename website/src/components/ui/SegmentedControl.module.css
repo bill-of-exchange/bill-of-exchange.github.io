@@ -1,0 +1,35 @@
+.group {
+    display: inline-flex;
+    border: 1px solid var(--ifm-color-emphasis-400);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.option {
+    min-height: 44px;
+    padding: 0 18px;
+    border: none;
+    background: transparent;
+    color: var(--ifm-font-color-base);
+    font: inherit;
+    cursor: pointer;
+}
+
+.option + .option {
+    border-left: 1px solid var(--ifm-color-emphasis-400);
+}
+
+.option:hover {
+    background: var(--ifm-color-emphasis-200);
+}
+
+.selected,
+.selected:hover {
+    background: #17695a; /* white text on it: 6.6:1 */
+    color: #ffffff;
+}
+
+.option:focus-visible {
+    outline: 2px solid var(--ifm-color-primary);
+    outline-offset: -2px;
+}

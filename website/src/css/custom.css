@@ -112,3 +112,29 @@ html[data-theme='dark'] {
 }
 
 /* ------------ */
+/* A link inside the copyright line (docusaurus.config.ts): the footer is dark in both themes, so
+   the theme's link colour would be too faint on it in the light theme. Use the colour of the other
+   footer links instead. */
+.footer__copyright a {
+    color: var(--ifm-footer-link-color);
+}
+
+.footer__copyright a:hover {
+    color: var(--ifm-footer-link-hover-color);
+}
+
+/* Footer links in square brackets: in the copyright line a link has the same colour as the text
+   around it, and brackets on every footer link make it recognisable as one. Footer only.
+   The text after "/" is what screen readers announce instead of the bracket: nothing (browsers
+   that do not support it ignore that declaration and keep the plain one). */
+.footer__link-item::before,
+.footer__copyright a::before {
+    content: "[";
+    content: "[" / "";
+}
+
+.footer__link-item::after,
+.footer__copyright a::after {
+    content: "]";
+    content: "]" / "";
+}

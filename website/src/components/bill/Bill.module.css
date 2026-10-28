@@ -1,0 +1,428 @@
+/*
+ * The bill is a paper document: it keeps its own colours in both site themes.
+ *
+ * Wide layout: a 1100 px design scaled to the container. `--px` is one design pixel, so every size
+ * below is written as in the design (calc(25 * var(--px)) is 25 px at 1100 px wide). Small text
+ * never goes below a readable minimum (max(…)).
+ * Narrow layout (container ≤ 899 px, the breakpoint in Bill.tsx): the bill is laid out vertically
+ * at natural sizes.
+ */
+
+.bill {
+    container-type: inline-size;
+    container-name: bill;
+
+    --paper: #f4efe2;
+    --ink: #1e2a27;
+    --muted: #4f5e59; /* 6:1 on --paper */
+    --engraving: #2c7a66;
+    --stamp: #233f8f;
+    --warning: #8c2a2a;
+    --serif: 'EB Garamond', 'Frank Ruhl Libre', Georgia, serif;
+    --display: 'Cinzel', 'EB Garamond', 'Frank Ruhl Libre', Georgia, serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.sheet {
+    --px: calc(100cqw / 1100);
+
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0;
+    min-height: calc(560 * var(--px));
+    /* The bottom padding keeps the footer inside the double rule of the frame. */
+    padding: calc(66 * var(--px)) calc(72 * var(--px)) calc(56 * var(--px));
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+.watermark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.watermarkText {
+    transform: rotate(-13deg);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: calc(88 * var(--px));
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: rgba(140, 42, 42, 0.1);
+}
+
+/* Both acceptance states stacked in one grid cell (see Layer in Bill.tsx): the bill keeps its size. */
+.stack {
+    display: grid;
+}
+
+.stack > * {
+    grid-area: 1 / 1;
+    min-width: 0;
+}
+
+/* Visibility is animated as well, so the outgoing variant stays visible while it fades out. */
+.layer {
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+}
+
+.hiddenLayer {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .layer {
+        transition: none;
+    }
+}
+
+/* The parts of the face, spread over the sheet's height. */
+.body {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: calc(22 * var(--px));
+}
+
+/* Face */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: calc(32 * var(--px));
+}
+
+.title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: calc(34 * var(--px));
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    margin-top: calc(8 * var(--px));
+    font-size: max(13px, calc(17 * var(--px)));
+    font-style: italic;
+    color: var(--muted);
+}
+
+.denomination {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: calc(8 * var(--px));
+}
+
+.rosette {
+    position: absolute;
+    width: calc(160 * var(--px));
+    height: calc(160 * var(--px));
+    right: calc(-24 * var(--px));
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.denominationValue {
+    position: relative;
+    font-size: calc(64 * var(--px));
+    font-weight: 500;
+    line-height: 1;
+}
+
+.denominationCode {
+    position: relative;
+    margin-top: calc(4 * var(--px));
+    font-family: var(--display);
+    font-size: max(11px, calc(13 * var(--px)));
+    letter-spacing: 0.12em;
+    color: var(--muted);
+}
+
+.label {
+    font-family: var(--display);
+    font-size: max(11px, calc(12 * var(--px)));
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.orderText {
+    margin: calc(8 * var(--px)) 0;
+    max-width: calc(880 * var(--px));
+    font-size: max(16px, calc(25 * var(--px)));
+    line-height: 1.3;
+}
+
+.timeOfPayment {
+    font-size: max(13px, calc(17 * var(--px)));
+    color: var(--muted);
+}
+
+.timeOfPayment strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.fields {
+    display: grid;
+    /* The drawer's column is wider so that the drawer's address fits on one line. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.18fr) minmax(0, 1fr);
+    gap: calc(32 * var(--px));
+    align-items: start;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--px));
+}
+
+.partyName {
+    font-size: max(14px, calc(19 * var(--px)));
+    line-height: 1.3;
+}
+
+.signature {
+    margin-top: calc(6 * var(--px));
+    padding-top: calc(8 * var(--px));
+    border-top: 1px solid #9daaa5;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.signatureNote {
+    font-size: max(12px, calc(14 * var(--px)));
+    font-style: italic;
+    color: var(--muted);
+}
+
+.address {
+    font-family: var(--mono);
+    font-size: max(10.5px, calc(11.5 * var(--px)));
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.awaitingAcceptance {
+    box-sizing: border-box;
+    min-height: calc(104 * var(--px));
+    padding: 8px;
+    border: 1.5px dashed #8e9c97;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.awaitingTitle {
+    font-size: max(14px, calc(17 * var(--px)));
+    font-style: italic;
+}
+
+.awaitingNote {
+    font-size: max(12px, calc(13 * var(--px)));
+}
+
+.stamp {
+    width: fit-content;
+    margin-top: 2px;
+    transform: rotate(-6deg);
+    padding: calc(10 * var(--px)) calc(18 * var(--px));
+    border: 3px double var(--stamp);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    color: var(--stamp);
+}
+
+.stampTitle {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: max(18px, calc(28 * var(--px)));
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.stampLine {
+    font-size: max(12px, calc(15 * var(--px)));
+    font-weight: 600;
+}
+
+.stampSigner {
+    font-family: var(--mono);
+    font-size: max(10.5px, calc(11.5 * var(--px)));
+}
+
+.stampStatute {
+    font-family: var(--display);
+    font-size: max(9.5px, calc(10.5 * var(--px)));
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* Footer, placeholders, messages */
+
+.footer {
+    position: relative;
+    margin-top: calc(24 * var(--px));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px calc(24 * var(--px));
+    font-size: max(12px, calc(13.5 * var(--px)));
+    color: var(--muted);
+}
+
+.footer a {
+    color: inherit;
+    font-family: var(--mono);
+    text-decoration: underline;
+}
+
+.badge {
+    padding: 3px 10px;
+    border: 1px solid var(--warning);
+    border-radius: 4px;
+    font-family: var(--display);
+    font-size: max(10px, calc(11 * var(--px)));
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--warning);
+}
+
+.placeholder {
+    display: inline-block;
+    height: 0.9em;
+    border-radius: 3px;
+    background: rgba(30, 42, 39, 0.1);
+    vertical-align: middle;
+}
+
+.message {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    font-size: max(16px, calc(21 * var(--px)));
+}
+
+.retryButton {
+    min-height: 44px;
+    padding: 0 20px;
+    border: 1px solid var(--ink);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Narrow: vertical layout at natural sizes */
+
+@container bill (max-width: 899px) {
+    .sheet {
+        --px: 1px;
+        min-height: 0;
+        padding: 32px 24px 22px;
+    }
+
+    .watermarkText {
+        font-size: 40px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+    }
+
+    .denomination {
+        align-items: flex-start;
+        padding-right: 0;
+    }
+
+    .rosette {
+        width: 120px;
+        height: 120px;
+        right: auto;
+        left: 20px;
+    }
+
+    .denominationValue {
+        font-size: 48px;
+    }
+
+    .orderText {
+        font-size: 19px;
+    }
+
+    .partyName {
+        font-size: 17px;
+    }
+
+    .fields {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .stamp {
+        margin: 6px 0 4px 6px;
+    }
+
+    .footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .badge {
+        white-space: normal;
+    }
+}

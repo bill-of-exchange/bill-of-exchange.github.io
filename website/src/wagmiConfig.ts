@@ -29,7 +29,14 @@ export const chains: readonly [Chain, Chain] = mode === 'production'
 export const config = createConfig({
     chains: chains,
     connectors: [
-        metaMask(),        // MetaMask connector
+        metaMask({
+            // The MetaMask SDK sends anonymous usage events (an "sdk_initialized" event with an
+            // anonymous id on every page load) to mm-sdk-analytics.api.cx.metamask.io unless told not to.
+            // This site does not ask its visitors to consent to third-party analytics, so it is off.
+            enableAnalytics: false,
+            // Shown in MetaMask when a visitor connects (wagmi's default name is 'wagmi').
+            dappMetadata: {name: 'Bills of Exchange'},
+        }),
         // injected(),        // Fallback for other injected wallets <- not needed
     ],
     transports: {

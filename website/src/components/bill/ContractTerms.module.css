@@ -1,0 +1,67 @@
+/* Deliberately in the site's own style, not the bill's paper: this is data, not a rendering. */
+
+.card {
+    padding: 24px;
+    border-radius: 8px;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    background: var(--ifm-background-surface-color);
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.heading {
+    margin: 4px 0 0;
+    font-size: 1.35rem;
+}
+
+.intro {
+    margin: 0;
+    color: var(--ifm-color-emphasis-700);
+}
+
+.statements {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.statement {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.statementTitle {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.getter {
+    font-size: 0.85rem;
+    color: var(--ifm-color-emphasis-700);
+}
+
+.text {
+    margin: 6px 0 0;
+    padding: 0 0 0 12px;
+    border-left: 3px solid var(--ifm-color-emphasis-300);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.placeholder {
+    height: 6em;
+    margin-top: 6px;
+    border-radius: 4px;
+    background: var(--ifm-color-emphasis-200);
+}
+
+.sourceLinks {
+    margin: 20px 0 0;
+}

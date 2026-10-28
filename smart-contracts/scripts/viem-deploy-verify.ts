@@ -29,6 +29,23 @@ const DEPLOYMENTS_DIRECTORY = "./deployments";
 
 const VERIFICATION_PROVIDERS = ["etherscan", "blockscout"] as const;
 
+/**
+ * Everything the website needs to talk to this deployment. The ABI is saved here, not taken from
+ * ./artifacts later, because the artifacts follow the source code, which may move on (a new
+ * version in development) while the site must keep using the code that is actually deployed.
+ */
+type DeploymentRecord = {
+    contractName: string;
+    networkName: string;
+    chainId: number;
+    contractAddress: string;
+    deploymentTx: string;
+    blockNumber: string;
+    deployer: string;
+    time: string;
+    abi: readonly unknown[];
+};
+
 // Public explorer APIs rate-limit bursts of requests (HTTP 429): retry a few times before giving up.
 const VERIFICATION_ATTEMPTS = 3;
 const RATE_LIMIT_BACKOFF_MS = 20_000;
@@ -86,6 +103,7 @@ async function main(): Promise<void> {
         blockNumber: receipt.blockNumber.toString(),
         deployer: deployerWalletClient.account.address,
         time: new Date().toISOString(),
+        abi: artifact.abi,
     });
 
     const failedProviders = await verifyOnExplorers(publicClient.chain.id, contractAddress);
@@ -95,13 +113,15 @@ async function main(): Promise<void> {
     }
 }
 
-function saveDeploymentRecord(record: Record<string, string | number>): void {
+function saveDeploymentRecord(record: DeploymentRecord): void {
     mkdirSync(DEPLOYMENTS_DIRECTORY, {recursive: true});
     // A sortable timestamp prefix keeps the records in deployment order.
-    const timestamp = String(record.time).replace(/[:.]/g, "-");
+    const timestamp = record.time.replace(/[:.]/g, "-");
     const filePath = `${DEPLOYMENTS_DIRECTORY}/${timestamp}_${record.networkName}_${record.contractAddress}.json`;
     writeFileSync(filePath, JSON.stringify(record, null, 2) + "\n");
     console.log(`Deployment record saved to ${filePath}`);
+    // website/scripts/sync-deployments.mjs reads these records before every website start/build.
+    console.log("The website picks up this address on its next `npm start` or `npm run build`.");
 }
 
 /** Tries every provider, even after a failure, and returns the names of those that failed. */
