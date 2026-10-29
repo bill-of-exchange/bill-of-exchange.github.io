@@ -1,0 +1,14 @@
+{
+  "nodeTimeoutMs": 5000,
+  "networks": {
+    "sepolia": {
+      "chainId": 11155111,
+      "nodes": [
+        {"url": "https://ethereum-sepolia-rpc.publicnode.com", "operator": "PublicNode (Allnodes)"},
+        {"url": "https://sepolia.gateway.tenderly.co", "operator": "Tenderly"},
+        {"url": "https://rpc.sepolia.ethpandaops.io", "operator": "ethPandaOps"},
+        {"url": "https://11155111.rpc.thirdweb.com", "operator": "thirdweb"}
+      ]
+    }
+  }
+}

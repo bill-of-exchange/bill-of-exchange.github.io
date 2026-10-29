@@ -45,6 +45,8 @@ Then, in `website/`:
 | `src/generated.ts` | **generated**: typed ABI and React hooks bound to the contract addresses |
 | `src/wagmi.cli.config.ts` | configuration of the wagmi CLI that writes `src/generated.ts` |
 | `scripts/sync-deployments.mjs` | writes `src/deployments.json` |
+| `src/rpcNodes.json` | the blockchain nodes the site reads from, in order (see Blockchain nodes) |
+| `scripts/check-rpc-nodes.mjs` | checks those nodes; run monthly by `.github/workflows/check-rpc-nodes.yml` |
 | `build/` | the built site; **committed**, because GitHub Pages serves it as is (see Publishing) |
 
 Never edit the generated files by hand: the next `start` or `build` overwrites them.
@@ -94,8 +96,10 @@ Rules:
 ## Blockchain nodes
 
 The site reads the blockchain (the terms of the bill, the registry figures, balances) through public JSON-RPC
-nodes. Which nodes, in which order and with which settings is set in `src/wagmiConfig.ts`, in `transports`, one entry
-per chain: a node serves one chain only, so every chain has its own list.
+nodes. The nodes and their order are listed in `src/rpcNodes.json`, together with the time each node is given
+(`nodeTimeoutMs`); `src/wagmiConfig.ts` builds the connection from that file, in `transports`, one entry per chain:
+a node serves one chain only, so every chain has its own list. `scripts/check-rpc-nodes.mjs` checks the same file,
+so the site and the check can never disagree about which nodes are in use.
 
 These nodes serve **reads only**. A visitor's transactions (drawing, accepting, transferring bills) are sent by the
 visitor's wallet through the node configured in the wallet; this list has no effect on them.
@@ -118,8 +122,8 @@ How the fallback behaves (viem 2.57, `node_modules/viem/_esm/clients/transports/
   the order above is kept as written, and viem does not probe the nodes in the background.
 - A node "fails" on a network error, an HTTP error or a timeout. An answer from the contract itself, such as a
   reverted call, is **not** a node failure: it is passed to the page as it is, without trying other nodes.
-- Each node gets 5 seconds (`timeout: 5_000`) and no retries of its own (`retryCount: 0`): the next node in the list
-  is the retry. A node that is down usually refuses at once; the 5 seconds matter only for a node that hangs.
+- Each node gets 5 seconds (`nodeTimeoutMs` in `src/rpcNodes.json`) and no retries of its own (`retryCount: 0`):
+  the next node in the list is the retry. A node that is down usually refuses at once; the 5 seconds matter only for a node that hangs.
 - When every node has failed, the fallback does not start a second round (`retryCount: 0` on the fallback). The page
   then shows its error state ("The bill could not be read … Try again"). React Query, which drives the wagmi hooks,
   still retries a failed query a few times with growing pauses before the page gives up.
@@ -162,19 +166,39 @@ opens the connection.
 | `rpc.sepolia.org` | no answer within 8 s | — |
 | `eth-sepolia.public.blastapi.io` | not reachable from a browser | — |
 
-Public nodes come and go: repeat the test every few months, and whenever the page shows read errors. In the
-browser console of the live site:
+### Checking the nodes
 
-```js
-const call = {jsonrpc: '2.0', id: 1, method: 'eth_call',
-    params: [{to: '<contract address>', data: '0xf1ae8856' /* DESCRIPTION() */}, 'latest']};
-for (const url of ['https://ethereum-sepolia-rpc.publicnode.com' /* , … */]) {
-    const started = performance.now();
-    const answer = await fetch(url, {method: 'POST', headers: {'content-type': 'application/json'},
-        body: JSON.stringify(call)}).then((r) => r.json()).catch(String);
-    console.log(url, Math.round(performance.now() - started), 'ms', answer.result ? 'ok' : answer);
-}
-```
+Public nodes come and go, so they are checked automatically: the GitHub Actions workflow
+`.github/workflows/check-rpc-nodes.yml` runs `scripts/check-rpc-nodes.mjs` on the 1st of every month, and on demand
+("Run workflow" in the repository's Actions tab). Locally: `node website/scripts/check-rpc-nodes.mjs` (no
+dependencies).
+
+For every node in `src/rpcNodes.json` the script checks that it
+
+1. serves the expected chain (`eth_chainId`);
+2. lets a browser on bills-of-exchange.com call it (the CORS preflight). On a server nothing enforces this, so a
+   node can pass every server-side test and still fail for every visitor; the script asks for it explicitly;
+3. answers the site's own read, `DESCRIPTION()` on the deployed contract (`eth_blockNumber` on a chain without a
+   deployment), at least 4 times out of 5, within `nodeTimeoutMs` each time.
+
+It writes a table (chain, CORS, reads, median response time) to the run's summary page and fails the run if any node
+fails. GitHub then sends a notification of the failed run; for scheduled runs, by GitHub's rules, to the user who last
+changed the `cron` line of the workflow.
+
+**What to do with the results.** The run only reports; a person decides:
+
+- **A node fails.** Look at the "Problems" list under the table. A single bad month can be chance: run the workflow
+  again. If the node keeps failing, move it down or replace it in `src/rpcNodes.json` (test a candidate by adding it
+  and running the workflow), then rebuild and publish the site.
+- **All nodes pass.** Leave the order alone. It is not a ranking by speed: PublicNode is first partly for privacy and
+  ethPandaOps is there for independence from the commercial operators. The medians are measured from GitHub's
+  servers, mostly in the US, not from where the visitors are, so a difference of tens of milliseconds means nothing;
+  speed only decides between otherwise equal nodes.
+
+The last resort, viem's default node, is not checked: it is not in the list, and the site does not choose it.
+
+GitHub disables scheduled workflows in a public repository after 60 days without activity in it. If the repository
+goes quiet, check the Actions tab and re-enable the workflow there.
 
 ## Conventions
 

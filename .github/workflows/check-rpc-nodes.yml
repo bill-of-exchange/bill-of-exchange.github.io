@@ -1,0 +1,30 @@
+# Checks the public blockchain nodes the website reads from (website/src/rpcNodes.json).
+# A failing node turns the run red; the results table is on the run's summary page.
+# The run only reports: whether to reorder or replace a node is decided by a person
+# (website/README.md, "Checking the nodes").
+name: Check blockchain nodes
+
+on:
+  schedule:
+    # Monthly, on the 1st at 06:17 UTC (off the full hour, when GitHub's scheduler is busiest).
+    - cron: "17 6 1 * *"
+  # "Run workflow" button in the Actions tab.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The script has no dependencies: no npm install needed.
+      - name: Check the nodes
+        run: node website/scripts/check-rpc-nodes.mjs
