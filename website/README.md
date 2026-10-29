@@ -91,6 +91,91 @@ Rules:
 - Without a connected wallet, or with a wallet on an unsupported chain, the interface shows the contract on the
   default chain (for example the block explorer links in `ContractOnExplorers.tsx`).
 
+## Blockchain nodes
+
+The site reads the blockchain (the terms of the bill, the registry figures, balances) through public JSON-RPC
+nodes. Which nodes, in which order and with which settings is set in `src/wagmiConfig.ts`, in `transports`, one entry
+per chain: a node serves one chain only, so every chain has its own list.
+
+These nodes serve **reads only**. A visitor's transactions (drawing, accepting, transferring bills) are sent by the
+visitor's wallet through the node configured in the wallet; this list has no effect on them.
+
+### Sepolia: a fallback list
+
+Sepolia uses viem's `fallback` transport over these nodes, in this order:
+
+| # | Node | Operator | Why here |
+|---|---|---|---|
+| 1 | `https://ethereum-sepolia-rpc.publicnode.com` | PublicNode (Allnodes) | among the two fastest in the test below; presents itself as "privacy first" |
+| 2 | `https://sepolia.gateway.tenderly.co` | Tenderly | the fastest in the test; a commercial developer platform |
+| 3 | `https://rpc.sepolia.ethpandaops.io` | ethPandaOps (operations of the Ethereum test networks) | independent of the two above; slower; test networks only |
+| 4 | `https://11155111.rpc.thirdweb.com` | thirdweb | the node the site used before (viem's default for Sepolia at the time), written out explicitly |
+| 5 | `http()` without a URL | whoever viem names | last resort, see below |
+
+How the fallback behaves (viem 2.57, `node_modules/viem/_esm/clients/transports/fallback.js`):
+
+- Every request goes to node 1. Only if it fails does the same request go to node 2, and so on. With `rank: false`
+  the order above is kept as written, and viem does not probe the nodes in the background.
+- A node "fails" on a network error, an HTTP error or a timeout. An answer from the contract itself, such as a
+  reverted call, is **not** a node failure: it is passed to the page as it is, without trying other nodes.
+- Each node gets 5 seconds (`timeout: 5_000`) and no retries of its own (`retryCount: 0`): the next node in the list
+  is the retry. A node that is down usually refuses at once; the 5 seconds matter only for a node that hangs.
+- When every node has failed, the fallback does not start a second round (`retryCount: 0` on the fallback). The page
+  then shows its error state ("The bill could not be read … Try again"). React Query, which drives the wagmi hooks,
+  still retries a failed query a few times with growing pauses before the page gives up.
+
+**The last resort, `http()` without a URL**, is viem's own default node for Sepolia. It is there on purpose, as one
+more independent chance, with a known trade-off: unlike nodes 1–4, it is chosen by the authors of viem and may change
+whenever viem is updated. With viem 2.57.11 it is `https://11155111.rpc.thirdweb.com`, the same as node 4; after an
+update it may become a different node, which is exactly the point of keeping it. The explicit nodes 1–4 never change
+with viem: a URL given to `http(url)` is always used as written.
+
+### Mainnet: viem's default
+
+Mainnet still uses `http()`: the contract is not deployed there yet, so the site hardly reads it. With viem 2.57.11
+that node is `https://ethereum.reth.rs/rpc`. Before a Mainnet deployment, give Mainnet its own explicit list in the
+same way: test nodes as described below. ethPandaOps does not serve Mainnet; the Mainnet URLs of the other operators
+differ from the Sepolia ones.
+
+### Privacy
+
+Any public node sees the IP address of the visitor whose browser asks it. With the fallback, nodes 2–5 see a visitor
+only when the nodes before them fail, so in normal operation one operator, PublicNode, sees the requests. The site
+does not use the private relay 1RPC, which claims not to keep any data or metadata
+([docs](https://docs.1rpc.io/web3-relay/zero-tracking)), because it was three to ten times slower in the test. If
+visitor privacy becomes more important than speed, put `https://1rpc.io/sepolia` first.
+
+### How the list was chosen (test of 2026-10-29)
+
+From a browser on bills-of-exchange.com (so that the nodes' CORS rules were tested as well), each node was sent the
+call the site makes, `DESCRIPTION()` on the demo contract, three times. Times in milliseconds; the first request also
+opens the connection.
+
+| Node | Result | ms |
+|---|---|---|
+| `ethereum-sepolia-rpc.publicnode.com` | works | 398 / 84 / 91 |
+| `sepolia.gateway.tenderly.co` | works | 224 / 73 / 76 |
+| `rpc.sepolia.ethpandaops.io` | works | 515 / 150 / 537 |
+| `11155111.rpc.thirdweb.com` | works | 333 / 234 / 389 |
+| `1rpc.io/sepolia` | works, slow | 1847 / 822 / 919 |
+| `sepolia.drpc.org` | refused: "chain is not available on free plan" | — |
+| `rpc.sepolia.org` | no answer within 8 s | — |
+| `eth-sepolia.public.blastapi.io` | not reachable from a browser | — |
+
+Public nodes come and go: repeat the test every few months, and whenever the page shows read errors. In the
+browser console of the live site:
+
+```js
+const call = {jsonrpc: '2.0', id: 1, method: 'eth_call',
+    params: [{to: '<contract address>', data: '0xf1ae8856' /* DESCRIPTION() */}, 'latest']};
+for (const url of ['https://ethereum-sepolia-rpc.publicnode.com' /* , … */]) {
+    const started = performance.now();
+    const answer = await fetch(url, {method: 'POST', headers: {'content-type': 'application/json'},
+        body: JSON.stringify(call)}).then((r) => r.json()).catch(String);
+    console.log(url, Math.round(performance.now() - started), 'ms', answer.result ? 'ok' : answer);
+}
+```
+
 ## Conventions
 
 - **Amounts.** One smallest unit of the token is one bill of 0.01 ILS; `TOKEN_DECIMALS = 2` in `src/constants.ts`

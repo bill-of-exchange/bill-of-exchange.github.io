@@ -1,4 +1,4 @@
-import {createConfig, http} from 'wagmi';
+import {createConfig, fallback, http} from 'wagmi';
 import {Chain, mainnet, sepolia} from 'wagmi/chains';
 import {metaMask} from '@wagmi/connectors';
 import {mode} from './constants';
@@ -26,6 +26,34 @@ export const chains: readonly [Chain, Chain] = mode === 'production'
 // or for dev only:
 // export const chains:readonly [Chain] = [sepolia]
 
+// --- Blockchain nodes (JSON-RPC) from which the site reads the contract.
+// Why these nodes, in this order, with these settings: README.md, "Blockchain nodes".
+// They serve reads only; a visitor's transactions go through the node set in the visitor's wallet.
+
+// Sepolia nodes in order of preference; each is asked only if all those before it failed.
+const SEPOLIA_NODES = [
+    'https://ethereum-sepolia-rpc.publicnode.com', // PublicNode (Allnodes)
+    'https://sepolia.gateway.tenderly.co',         // Tenderly
+    'https://rpc.sepolia.ethpandaops.io',          // ethPandaOps (Ethereum testnet operations)
+    'https://11155111.rpc.thirdweb.com',           // thirdweb (viem's default for Sepolia when chosen)
+] as const;
+
+// Give up on a node quickly and let the next one answer: the next node *is* the retry.
+const NODE_OPTIONS = {timeout: 5_000, retryCount: 0} as const;
+
+const sepoliaTransport = fallback(
+    [
+        ...SEPOLIA_NODES.map((url) => http(url, NODE_OPTIONS)),
+        // Last resort, kept on purpose: viem's own default Sepolia node. Unlike the nodes above,
+        // it is chosen by the authors of viem and may change when viem is updated.
+        http(undefined, NODE_OPTIONS),
+    ],
+    {
+        rank: false,      // keep the order above; no background latency probing of the nodes
+        retryCount: 0,    // no second round once every node has failed: the page offers "Try again"
+    },
+);
+
 export const config = createConfig({
     chains: chains,
     connectors: [
@@ -40,8 +68,9 @@ export const config = createConfig({
         // injected(),        // Fallback for other injected wallets <- not needed
     ],
     transports: {
+        // No contract on Mainnet yet: viem's default node is enough until then.
         [mainnet.id]: http(),
-        [sepolia.id]: http(),
+        [sepolia.id]: sepoliaTransport,
     },
 
     // https://wagmi.sh/react/api/createConfig#ssr
