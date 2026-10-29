@@ -41,3 +41,25 @@ export function verifiedSourceLinks(chainId: DeployedChainId, address: Address):
         {name: 'Blockscout', url: `${blockchainExplorerUrl.Blockscout[chainId]}address/${address}?tab=contract`},
     ];
 }
+
+/** A transaction on the site's default block explorer. */
+export function explorerTransactionUrl(chainId: DeployedChainId, transactionHash: string): string {
+    return `${blockchainExplorerUrl[defaultBlockchainExplorer][chainId]}tx/${transactionHash}`;
+}
+
+/** Where a holder can see the full history of their transfers of this contract's bills. */
+export function holderHistoryLinks(chainId: DeployedChainId, holder: Address, contract: Address): NamedLink[] {
+    return [
+        {name: 'Blockscout', url: `${blockchainExplorerUrl.Blockscout[chainId]}address/${holder}?tab=token_transfers`},
+        // Etherscan's token page filtered to one holder ("?a=").
+        {name: 'Etherscan', url: `${blockchainExplorerUrl.Etherscan[chainId]}token/${contract}?a=${holder}`},
+    ];
+}
+
+/**
+ * Blockscout's API for a holder's transfers of one token, newest first. Blockscout indexes the chain,
+ * so this works however long ago the contract was deployed, unlike reading the logs from a node.
+ */
+export function holderTransfersApiUrl(chainId: DeployedChainId, holder: Address, contract: Address): string {
+    return `${blockchainExplorerUrl.Blockscout[chainId]}api/v2/addresses/${holder}/token-transfers?type=ERC-20&token=${contract}`;
+}

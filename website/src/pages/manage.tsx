@@ -1,15 +1,8 @@
 import type {ReactNode} from 'react';
 import React from 'react';
-import Layout from '@theme/Layout';
-import ContractPage from "@site/src/components/contracts/ContractPage";
+import {Redirect} from '@docusaurus/router';
 
-export default function ManagePage():ReactNode {
-    return (
-        <Layout title="Manage" description="Manage your tokens">
-            <ContractPage
-                // contractName={"Manage your bills of exchange"}
-                contractDescription={"Manage your electronic bills of exchange"}
-            />
-        </Layout>
-    );
-};
+// The holder's page is now "My bills" at /wallet/; old links to /manage/ lead there.
+export default function ManagePage(): ReactNode {
+    return <Redirect to="/wallet/"/>;
+}

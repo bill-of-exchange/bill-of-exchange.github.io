@@ -33,7 +33,8 @@ Then, in `website/`:
 | Path | Contents |
 |---|---|
 | `docs/`, `blog/` | documentation and blog (Markdown/MDX) |
-| `src/pages/` | pages: `index.tsx` (home: the bill and the registry figures), `manage.tsx` (the contract cards), `playground.tsx` (hidden, see below) |
+| `src/pages/` | pages: `index.tsx` (home: the bill and the registry figures), `wallet.tsx` ("My bills", the holder's page), `manage.tsx` (redirects old links to `/wallet/`), `playground.tsx` (hidden, see below) |
+| `src/components/wallet/` | the holder's page: `WalletGate` (connect / switch network / content), holdings, send, receive, recent transfers, verify another holder |
 | `src/components/bill/` | the bill rendered from the contract (`Bill.tsx`), the statements recorded with it shown as contract text (`ContractTerms.tsx`), the hooks that read them (`useBillTerms.ts`), the home page showcase |
 | `src/components/contracts/` | contract interface components; `BoE/` holds the BillsOfExchange cards; `useDisplayedContract.ts` decides which chain and address a page shows |
 | `src/components/wagmi/` | wallet connection, chain switcher, address helpers |
@@ -226,6 +227,30 @@ goes quiet, check the Actions tab and re-enable the workflow there.
   the font stack falls back to Frank Ruhl Libre for that glyph.
 - **Permissions.** The site holds no secrets and enforces nothing: who may draw or accept bills is enforced by the
   contract. Interface checks only spare users failing transactions.
+
+## The holder's page ("My bills")
+
+`/wallet/` is the page of the holder (bearer) of accepted bills. In order:
+
+- **Gate** (`WalletGate.tsx`). No wallet connected → a "Connect your wallet" panel. A wallet on a network without
+  the contract → "Switch to Sepolia". Only a wallet on the bills' network sees the content, so no action can be sent to
+  a network where the contract does not exist (there its address is the zero address, and a transfer "to" it would
+  succeed without doing anything).
+- **Holdings**: the number of accepted bills, their face value, and who is liable on them (`DRAWEE_NAME` from the
+  contract); unaccepted bills only if the holder has any. Refreshed every 15 seconds, and at once after the holder's
+  own transfer. Buttons: Send, Receive, Add to MetaMask (`wallet_watchAsset`).
+- **Send**: enter (amount as face value or as a number of bills, "Max", recipient) → review (summary, and a note that
+  the transfer is final) → progress (confirm in the wallet → submitted → **confirmed in block N** or **failed**). The
+  outcome comes from the transaction receipt, not from the wallet's "submitted": only a receipt says whether the
+  transfer happened. The receipt is awaited with viem's `waitForTransactionReceipt`, not wagmi's
+  `useWaitForTransactionReceipt`: wagmi's throws on a reverted transaction instead of returning its receipt, and
+  the page would show a vague error after several seconds of retries instead of "failed in block N". Deliberately absent, for the demonstration: checks against the balance, the holder's own
+  address or the contract's address (a failing transfer shows how a failure looks).
+- **Receive**: the holder's address as text, as a QR code (`qrcode.react`) and through the system share sheet.
+- **Recent transfers**: the last five, from Blockscout's API (an indexer, so it works however old the contract is),
+  with links to the full history on Blockscout and Etherscan. Acceptance moves no tokens and emits no `Transfer`
+  event, so it does not appear here.
+- **Verify another holder** and **About this contract**: collapsed.
 
 ## Hidden pages
 

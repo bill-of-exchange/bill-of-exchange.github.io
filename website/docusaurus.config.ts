@@ -133,7 +133,7 @@ const config: Config = {
                 src: 'img/logos/logo.svg', //
             },
             items: [
-                {to: '/manage', label: 'Manage', position: 'left'},
+                {to: '/wallet', label: 'My bills', position: 'left'},
                 {
                     type: 'docSidebar',
                     sidebarId: 'tutorialSidebar',
