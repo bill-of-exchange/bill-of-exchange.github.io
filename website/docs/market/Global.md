@@ -6,7 +6,11 @@ sidebar_position: 1
 
 ## Electronic bills of exchange 
 
-[Cryptonomica: electronic bills of exchange](https://github.com/Cryptonomica/cryptonomica/wiki/electronic-bills-of-exchange)
+[Cryptonomica: electronic bills of exchange](https://github.com/Cryptonomica/cryptonomica/wiki/electronic-bills-of-exchange) 
+
+---
+
+[ETR Digital Bills of Exchange](https://etr.digital/digital-bills-of-exchange)
 
 ## Stable coins 
 
