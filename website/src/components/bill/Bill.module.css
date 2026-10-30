@@ -294,6 +294,17 @@
     text-transform: uppercase;
 }
 
+/* The stamp keeps its ink colour: the link shows itself only on hover and keyboard focus. */
+.stampStatuteLink,
+.stampStatuteLink:hover {
+    color: inherit;
+}
+
+.stampStatuteLink:hover,
+.stampStatuteLink:focus-visible {
+    text-decoration: underline;
+}
+
 /* Footer, placeholders, messages */
 
 .footer {

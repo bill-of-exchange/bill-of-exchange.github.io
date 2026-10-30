@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # Singapore
 
-Singapore was among the first countries to adopt the UNCITRAL Model Law on Electronic Transferable Records and is the home of TradeTrust, the most developed open-source framework for electronic transferable documents. Its bills of exchange law, like ours, descends from the UK Bills of Exchange Act 1882.
+Singapore was among the first countries to adopt the UNCITRAL Model Law on Electronic Transferable Records and is the home of TradeTrust, the most developed open-source framework for electronic transferable documents. Its bills of exchange law, like ours, descends from the UK [Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61).
 
 ## Law 
 

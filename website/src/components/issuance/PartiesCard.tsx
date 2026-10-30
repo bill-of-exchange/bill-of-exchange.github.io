@@ -7,6 +7,7 @@ import {useBillTerms} from '@site/src/components/bill/useBillTerms';
 import {type BillDenomination, currencySymbol, formatBillCount, formatBillsSum} from '@site/src/components/bill/formatBills';
 import RegistrySummary from '@site/src/components/bill/RegistrySummary';
 import {useHolderBills} from '@site/src/components/wallet/useHolderBills';
+import BillsOfExchangeAct, {BillsOfExchangeActSection} from '@site/src/components/law/BillsOfExchangeAct';
 import styles from '@site/src/components/wallet/MyBills.module.css';
 
 /** Who draws and who accepts, what each holds now, and the totals of both ledgers. Needs no wallet. */
@@ -43,8 +44,8 @@ export default function PartiesCard() {
                 <p className={styles.hint}>
                     In this demonstration deployment the drawer and the drawee use the same address, so one wallet
                     can draw and accept. Where drawer and drawee are the same person, the holder may treat the
-                    instrument either as a bill of exchange or as a promissory note (Bills of Exchange Act 1882,
-                    s.5(2)).
+                    instrument either as a bill of exchange or as a promissory note (<BillsOfExchangeAct/>,
+                    <BillsOfExchangeActSection section={5}>s.5(2)</BillsOfExchangeActSection>).
                 </p>
             )}
             <RegistrySummary/>

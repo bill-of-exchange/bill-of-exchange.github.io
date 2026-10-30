@@ -9,6 +9,7 @@ import {currencySymbol, formatBillCount} from '@site/src/components/bill/formatB
 import BillsActionForm from '@site/src/components/wallet/BillsActionForm';
 import {useBillsTransaction} from '@site/src/components/wallet/useBillsTransaction';
 import {useHolderBills} from '@site/src/components/wallet/useHolderBills';
+import BillsOfExchangeAct, {BillsOfExchangeActSection} from '@site/src/components/law/BillsOfExchangeAct';
 import styles from '@site/src/components/wallet/MyBills.module.css';
 
 type StepProps = {
@@ -193,7 +194,8 @@ function AcceptStep({account, terms, drawee, onSettled}: StepProps) {
                     ]}
                     reviewNote={<>
                         Your signature of this transaction is the drawee's acceptance: the mere signature of the
-                        drawee is sufficient (Bills of Exchange Act 1882, s.17(2)(a)). The contract has no way to
+                        drawee is sufficient (<BillsOfExchangeAct/>,
+                        <BillsOfExchangeActSection section={17}>s.17(2)(a)</BillsOfExchangeActSection>). The contract has no way to
                         undo an acceptance.
                     </>}
                     wording={{

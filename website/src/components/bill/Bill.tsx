@@ -17,6 +17,7 @@ import {type BillTerms, useBillTerms} from './useBillTerms';
 import {currencySymbol} from './formatBills';
 import {guillocheBorderPaths, ROSETTE_PATHS, ROSETTE_SIZE} from './guilloche';
 import {useElementSize} from './useElementSize';
+import BillsOfExchangeAct, {BillsOfExchangeActSection} from '@site/src/components/law/BillsOfExchangeAct';
 import styles from './Bill.module.css';
 
 // The wide layout reproduces a design DESIGN_WIDTH px wide, scaled to the container. Narrower than
@@ -27,7 +28,7 @@ const NARROW_LAYOUT_MAX_WIDTH = 899;
 // Not read from the contract: legal characterisations shown on the bill as decided by the project
 // owner. Everything else the bill asserts comes from the contract (specification §3.6).
 const OWNER_APPROVED_SUBTITLE = 'Electronic trade document · payable to bearer';
-const OWNER_APPROVED_STAMP_STATUTE = 'Bills of Exchange Act 1882 · s.17';
+const OWNER_APPROVED_STAMP_SECTION = 17;
 
 type BillProps = {
     /** Shows the bill with the drawee's acceptance stamp, or with an empty acceptance box. */
@@ -202,7 +203,13 @@ function AcceptanceStamp({drawee}: { drawee: string | undefined }) {
             <div className={styles.stampTitle}>Accepted</div>
             <div className={styles.stampLine}>by the drawee</div>
             <div className={styles.stampSigner}>signed <Term value={drawee && truncateAddress(drawee)} placeholderWidth="7em"/></div>
-            <div className={styles.stampStatute}>{OWNER_APPROVED_STAMP_STATUTE}</div>
+            <div className={styles.stampStatute}>
+                <BillsOfExchangeAct className={styles.stampStatuteLink}/>
+                {' · '}
+                <BillsOfExchangeActSection section={OWNER_APPROVED_STAMP_SECTION} className={styles.stampStatuteLink}>
+                    s.{OWNER_APPROVED_STAMP_SECTION}
+                </BillsOfExchangeActSection>
+            </div>
         </div>
     );
 }

@@ -10,7 +10,7 @@ title: "Glossary"
 
 > A negotiable instrument can serve to convey value constituting at least part of the performance of a contract, albeit perhaps not obvious in contract formation, in terms inherent in and arising from the requisite offer and acceptance and conveyance of consideration.
 
-> In the Commonwealth of Nations almost all jurisdictions have codified the law relating to negotiable instruments in a Bills of Exchange Act, e.g. Bills of Exchange Act 1882 in the UK, Bills of Exchange Act 1890 in Canada, Bills of Exchange Act 1908 in New Zealand, Bills of Exchange Act 1909 in Australia, the Negotiable Instruments Act, 1881 in India and the Bills of Exchange Act 1914 in Mauritius.
+> In the Commonwealth of Nations almost all jurisdictions have codified the law relating to negotiable instruments in a Bills of Exchange Act, e.g. [Bills of Exchange Act 1882](https://www.legislation.gov.uk/ukpga/Vict/45-46/61) in the UK, Bills of Exchange Act 1890 in Canada, Bills of Exchange Act 1908 in New Zealand, Bills of Exchange Act 1909 in Australia, the Negotiable Instruments Act, 1881 in India and the Bills of Exchange Act 1914 in Mauritius.
 
 [Wikipedia: Cheque](https://en.wikipedia.org/wiki/Cheque) 
 > A cheque is a negotiable instrument instructing a financial institution to pay a specific amount of a specific currency from a specified transactional account held in the drawer's name with that institution. Both the drawer and payee may be natural persons or legal entities.
