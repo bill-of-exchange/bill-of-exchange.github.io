@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([["2017"],{9553(e,t,s){s.r(t),s.d(t,{default:()=>a});var r=s(2540);s(3696);var u=s(9519);function a(){return(0,r.jsx)(u.rd,{to:"/wallet/"})}}}]);

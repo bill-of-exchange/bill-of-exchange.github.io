@@ -32,7 +32,8 @@ export default function BillShowcase() {
             <header className={styles.intro}>
                 <h1 className={styles.heading}>An electronic bill of exchange</h1>
                 <p className={styles.lede}>
-                    The terms of this bill are read from its registry on the blockchain, not stored on this site.
+                    This is a visual representation of the bill recorded in the smart contract, rendered from the
+                    contract's own data.
                 </p>
             </header>
 
