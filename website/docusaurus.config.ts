@@ -134,6 +134,7 @@ const config: Config = {
             },
             items: [
                 {to: '/wallet', label: 'My bills', position: 'left'},
+                {to: '/issue', label: 'Issue & accept', position: 'left'},
                 {
                     type: 'docSidebar',
                     sidebarId: 'tutorialSidebar',

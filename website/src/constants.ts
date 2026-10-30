@@ -12,6 +12,8 @@ export const mode:'dev' | 'production' = 'dev';
 export const currencySymbolSVG = faShekelSign;
 export const currencySymbolString = "₪";
 // Must equal BillsOfExchange.decimals(): one smallest unit = one bill = 0.01 ILS (one agora).
+// Used only by the old /manage components (src/components/contracts/BoE), kept until they are deleted.
+// Everything else reads decimals() from the contract: see useBillDenomination.
 export const TOKEN_DECIMALS = 2;
 
 export const CHAINS = [1, 11155111] as const;

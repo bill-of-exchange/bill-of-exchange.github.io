@@ -9,9 +9,15 @@ import styles from './MyBills.module.css';
 const BILLS_CHAIN = chains.find((chain) =>
     isDeployedChainId(chain.id) && deployments.BillsOfExchange[chain.id] !== zeroAddress);
 
+const HOLDER_CONNECT_PROMPT =
+    'Connect the wallet that holds your bills to see them and send them. The site only reads from your ' +
+    'wallet: every transfer needs your confirmation in the wallet itself.';
+
 type WalletGateProps = {
     /** Rendered only for a connected wallet on the chain the bills live on. */
-    children: (holder: Address) => ReactNode;
+    children: (account: Address) => ReactNode;
+    /** What connecting the wallet is for, on this page. */
+    connectPrompt?: string;
 };
 
 /**
@@ -19,11 +25,11 @@ type WalletGateProps = {
  * where the contract is deployed. Otherwise it says what to do. This is what keeps every action from
  * being sent to a chain without the contract.
  */
-export default function WalletGate({children}: WalletGateProps) {
+export default function WalletGate({children, connectPrompt = HOLDER_CONNECT_PROMPT}: WalletGateProps) {
     const {address, isConnected, chainId, chain} = useAccount();
 
     if (!isConnected || address === undefined) {
-        return <ConnectPanel/>;
+        return <ConnectPanel prompt={connectPrompt}/>;
     }
     const isOnBillsChain = isDeployedChainId(chainId) && deployments.BillsOfExchange[chainId] !== zeroAddress;
     if (!isOnBillsChain) {
@@ -32,15 +38,12 @@ export default function WalletGate({children}: WalletGateProps) {
     return <>{children(address)}</>;
 }
 
-function ConnectPanel() {
+function ConnectPanel({prompt}: { prompt: string }) {
     const {connectors, connect, isPending, error} = useConnect();
     return (
         <section className={styles.panel}>
             <h2 className={styles.panelTitle}>Connect your wallet</h2>
-            <p>
-                Connect the wallet that holds your bills to see them and send them. The site only reads from your
-                wallet: every transfer needs your confirmation in the wallet itself.
-            </p>
+            <p>{prompt}</p>
             <div className={styles.actions}>
                 {connectors.map((connector) => (
                     <button key={connector.uid} type="button" className="button button--primary"

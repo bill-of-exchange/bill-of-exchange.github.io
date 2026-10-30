@@ -1,6 +1,7 @@
 import {useReadContracts} from 'wagmi';
 import {billsOfExchangeAbi} from '@site/src/generated';
 import {useDisplayedContract} from '@site/src/components/contracts/useDisplayedContract';
+import {type BillDenomination, currencySymbol} from './formatBills';
 
 // The getters that make up the text of the bill: the stable interface of specification §3.6.
 // Their order here is the order of the values returned by the multicall below.
@@ -25,14 +26,20 @@ export type BillTermsResult =
     | { status: 'loading' }
     | { status: 'not-deployed' }
     | { status: 'error'; retry: () => void }
-    | { status: 'ready'; terms: BillTerms };
+    | { status: 'ready'; terms: BillTerms; decimals: number };
 
-/** Reads the terms of the bill from the contract shown on the current chain, in one multicall. */
+/**
+ * Reads the terms of the bill, and the contract's `decimals()`, from the contract shown on the current
+ * chain, in one multicall.
+ */
 export function useBillTerms(): BillTermsResult {
     const {chainId, address, isDeployed} = useDisplayedContract('BillsOfExchange');
     const {data, status, refetch} = useReadContracts({
         allowFailure: false,
-        contracts: TERM_GETTERS.map((functionName) => ({abi: billsOfExchangeAbi, address, chainId, functionName})),
+        contracts: [
+            ...TERM_GETTERS.map((functionName) => ({abi: billsOfExchangeAbi, address, chainId, functionName})),
+            {abi: billsOfExchangeAbi, address, chainId, functionName: 'decimals'},
+        ],
         // The terms are compile-time constants of a deployed contract: they never change.
         query: {enabled: isDeployed, staleTime: Infinity},
     });
@@ -48,7 +55,16 @@ export function useBillTerms(): BillTermsResult {
     }
     const values = data as readonly unknown[];
     const terms = Object.fromEntries(TERM_GETTERS.map((getter, index) => [getter, String(values[index])])) as BillTerms;
-    return {status: 'ready', terms};
+    // decimals() comes last, after the term getters.
+    return {status: 'ready', terms, decimals: Number(values[TERM_GETTERS.length])};
+}
+
+/** The currency symbol and decimals of the bills; undefined until the contract has been read. */
+export function useBillDenomination(): BillDenomination | undefined {
+    const termsResult = useBillTerms();
+    return termsResult.status === 'ready'
+        ? {symbol: currencySymbol(termsResult.terms.CURRENCY), decimals: termsResult.decimals}
+        : undefined;
 }
 
 export type RegistryTotals = { accepted: bigint; unaccepted: bigint };

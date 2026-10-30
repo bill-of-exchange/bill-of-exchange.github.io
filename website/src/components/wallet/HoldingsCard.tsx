@@ -1,10 +1,9 @@
 import React from 'react';
 import {useReadContract, useWatchAsset} from 'wagmi';
-import {TOKEN_DECIMALS} from '@site/src/constants';
 import {billsOfExchangeAbi} from '@site/src/generated';
 import {useDisplayedContract} from '@site/src/components/contracts/useDisplayedContract';
-import {useBillTerms} from '@site/src/components/bill/useBillTerms';
-import {currencySymbol, formatBillCount, formatBillsSum} from '@site/src/components/bill/formatBills';
+import {useBillDenomination, useBillTerms} from '@site/src/components/bill/useBillTerms';
+import {formatBillCount, formatBillsSum} from '@site/src/components/bill/formatBills';
 import type {HolderBills} from './useHolderBills';
 import styles from './MyBills.module.css';
 
@@ -18,18 +17,18 @@ type HoldingsCardProps = {
 export default function HoldingsCard({bills, onSend, onReceive}: HoldingsCardProps) {
     const termsResult = useBillTerms();
     const terms = termsResult.status === 'ready' ? termsResult.terms : undefined;
-    const symbol = terms && currencySymbol(terms.CURRENCY);
+    const denomination = useBillDenomination();
 
     return (
         <section className={styles.holdings} aria-labelledby="holdings-heading">
-            <BillThumbnail denomination={terms && `${symbol}${terms.SUM_PER_BILL}`}/>
+            <BillThumbnail denomination={terms && denomination && `${denomination.symbol}${terms.SUM_PER_BILL}`}/>
             <div className={styles.holdingsText}>
                 <h2 id="holdings-heading" className={styles.holdingsLabel}>Your bills</h2>
                 <div className={styles.holdingsCount}>
                     {bills === undefined ? '—' : `${formatBillCount(bills.accepted)} bills`}
                 </div>
                 <div className={styles.holdingsDetail}>
-                    {bills !== undefined && symbol !== undefined && `face value ${formatBillsSum(bills.accepted, symbol)} · `}
+                    {bills !== undefined && denomination !== undefined && `face value ${formatBillsSum(bills.accepted, denomination)} · `}
                     accepted · payable by {terms?.DRAWEE_NAME ?? 'the drawee'}
                 </div>
                 {/* Unaccepted bills normally never reach holders; if some did, they must not be invisible. */}
@@ -63,11 +62,12 @@ function BillThumbnail({denomination}: { denomination: string | undefined }) {
 function AddToWalletButton() {
     const {address} = useDisplayedContract('BillsOfExchange');
     const {data: symbol} = useReadContract({abi: billsOfExchangeAbi, address, functionName: 'symbol'});
+    const denomination = useBillDenomination();
     const {watchAsset, isPending, isSuccess, error} = useWatchAsset();
     return (
         <>
-            <button type="button" className="button button--secondary" disabled={symbol === undefined || isPending}
-                    onClick={() => watchAsset({type: 'ERC20', options: {address, symbol: symbol!, decimals: TOKEN_DECIMALS}})}>
+            <button type="button" className="button button--secondary" disabled={symbol === undefined || denomination === undefined || isPending}
+                    onClick={() => watchAsset({type: 'ERC20', options: {address, symbol: symbol!, decimals: denomination!.decimals}})}>
                 {isSuccess ? 'Added to wallet' : 'Add to MetaMask'}
             </button>
             {error && <span className={styles.errorText}>{error.message}</span>}

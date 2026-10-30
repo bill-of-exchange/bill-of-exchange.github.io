@@ -33,15 +33,16 @@ Then, in `website/`:
 | Path | Contents |
 |---|---|
 | `docs/`, `blog/` | documentation and blog (Markdown/MDX) |
-| `src/pages/` | pages: `index.tsx` (home: the bill and the registry figures), `wallet.tsx` ("My bills", the holder's page), `manage.tsx` (redirects old links to `/wallet/`), `playground.tsx` (hidden, see below) |
-| `src/components/wallet/` | the holder's page: `WalletGate` (connect / switch network / content), holdings, send, receive, recent transfers, verify another holder |
+| `src/pages/` | pages: `index.tsx` (home: the bill and the registry figures), `issue.tsx` ("Issue and accept", the drawer's and the drawee's page), `wallet.tsx` ("My bills", the holder's page), `manage.tsx` (redirects old links to `/wallet/`), `playground.tsx` (hidden, see below) |
+| `src/components/wallet/` | the holder's page: `WalletGate` (connect / switch network / content), holdings, send, receive, recent transfers, verify another holder; and what every action on bills shares: `BillsActionForm` (enter → review → progress), `useBillsTransaction` (write and receipt), `billAmount` (parsing amounts) |
+| `src/components/issuance/` | the drawer's and the drawee's page: the parties and the registry, the steps draw, deliver and accept |
 | `src/components/bill/` | the bill rendered from the contract (`Bill.tsx`), the statements recorded with it shown as contract text (`ContractTerms.tsx`), the hooks that read them (`useBillTerms.ts`), the home page showcase |
 | `src/components/contracts/` | contract interface components; `BoE/` holds the BillsOfExchange cards; `useDisplayedContract.ts` decides which chain and address a page shows |
 | `src/components/wagmi/` | wallet connection, chain switcher, address helpers |
 | `src/components/docs/` | components used inside documentation pages |
 | `src/theme/Root.tsx` | wraps the whole site in the wagmi and React Query providers |
 | `src/wagmiConfig.ts` | wagmi configuration: chains, connectors, transports |
-| `src/constants.ts` | site-wide constants: chains, contract addresses, explorers, decimals |
+| `src/constants.ts` | site-wide constants: chains, contract addresses, explorers |
 | `src/deployments.json` | **generated**: latest deployment per contract and chain |
 | `src/generated.ts` | **generated**: typed ABI and React hooks bound to the contract addresses |
 | `src/wagmi.cli.config.ts` | configuration of the wagmi CLI that writes `src/generated.ts` |
@@ -203,9 +204,13 @@ goes quiet, check the Actions tab and re-enable the workflow there.
 
 ## Conventions
 
-- **Amounts.** One smallest unit of the token is one bill of 0.01 ILS; `TOKEN_DECIMALS = 2` in `src/constants.ts`
-  must equal the contract's `decimals()`. Convert with viem's `parseUnits` / `formatUnits` and keep amounts as
-  `bigint`; never multiply floats (`0.29 * 100 === 28.999999999999996`).
+- **Amounts.** One smallest unit of the token is one bill; a bill is worth 10^-decimals of the currency
+  (specification §3.3). The site reads `decimals()` from the contract together with the terms of the bill
+  (`useBillTerms`) and offers it as `useBillDenomination()`: the currency symbol and the decimals. Every sum shown
+  and every face value typed goes through it (`formatBillsSum`, `parseAmount`, `amountText`), so a contract with
+  other decimals needs no change on the site. `TOKEN_DECIMALS` in `src/constants.ts` is left only for the old
+  `/manage` components. Convert with viem's `parseUnits` / `formatUnits` and keep amounts as `bigint`; never
+  multiply floats (`0.29 * 100 === 28.999999999999996`).
 - **Rendering the bill.** Whatever shows the terms of the bill must read them from the contract, never keep a copy.
   The contract constants it relies on are a stable interface: specification §3.6
   ([`BillOfExchange_Specification.v.0.1.0.md`](../smart-contracts/contracts/BillOfExchange_Specification.v.0.1.0.md)).
@@ -239,7 +244,7 @@ goes quiet, check the Actions tab and re-enable the workflow there.
 - **Holdings**: the number of accepted bills, their face value, and who is liable on them (`DRAWEE_NAME` from the
   contract); unaccepted bills only if the holder has any. Refreshed every 15 seconds, and at once after the holder's
   own transfer. Buttons: Send, Receive, Add to MetaMask (`wallet_watchAsset`).
-- **Send**: enter (amount as face value or as a number of bills, "Max", recipient) → review (summary, and a note that
+- **Send** (`SendPanel.tsx`, built on `BillsActionForm`, like every action on the issuance page): enter (amount as face value or as a number of bills, "Max", recipient) → review (summary, and a note that
   the transfer is final) → progress (confirm in the wallet → submitted → **confirmed in block N** or **failed**). The
   outcome comes from the transaction receipt, not from the wallet's "submitted": only a receipt says whether the
   transfer happened. The receipt is awaited with viem's `waitForTransactionReceipt`, not wagmi's
@@ -251,6 +256,26 @@ goes quiet, check the Actions tab and re-enable the workflow there.
   with links to the full history on Blockscout and Etherscan. Acceptance moves no tokens and emits no `Transfer`
   event, so it does not appear here.
 - **Verify another holder** and **About this contract**: collapsed.
+
+## The drawer's and the drawee's page ("Issue and accept")
+
+`/issue/` shows how a bill comes into being. It is public and in the menu, because its first readers are partners
+watching a demonstration; the contract, not the page, decides who may act.
+
+- **The parties** (no wallet needed): the drawer and the drawee as recorded in the contract (`DRAWER_NAME`,
+  `DRAWEE_NAME`, their addresses), what each holds in each ledger, and the registry totals (`RegistrySummary`, as on
+  the home page). When the two addresses are the same, as in the demonstration deployment, the page says so and
+  cites BEA 1882 s.5(2).
+- **Gate**: the same `WalletGate` as "My bills", with its own prompt.
+- **Step 1, Draw** (`draw(amount)`): shown as a form only to the drawer's address.
+- **Step 2, Deliver to the drawee** (`transferOfUnaccepted(drawee, amount)`): the recipient is always the drawee, the
+  path the model intends for unaccepted bills; the contract itself would accept any recipient. When drawer and drawee
+  are the same address, the step explains that there is nothing to deliver.
+- **Step 3, Accept** (`acceptOn(holder, amount)`): shown as a form only to the drawee's address. The holder defaults
+  to the drawee; another address may be entered, because the contract lets the drawee accept bills held elsewhere.
+  `acceptOn` is used rather than `accept`: `accept(amount)` is `acceptOn(msg.sender, amount)`, so one call covers both.
+- Every step that the connected wallet cannot take says which address can, instead of disappearing: a visitor sees the
+  whole procedure. After any transaction is in a block, all contract reads on the page are refreshed.
 
 ## Hidden pages
 

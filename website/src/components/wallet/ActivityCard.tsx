@@ -9,8 +9,8 @@ import {
     holderTransfersApiUrl,
 } from '@site/src/components/contracts/contractLinks';
 import truncateAddress from '@site/src/components/wagmi/truncateAddress';
-import {useBillTerms} from '@site/src/components/bill/useBillTerms';
-import {currencySymbol, formatBillCount, formatBillsSum} from '@site/src/components/bill/formatBills';
+import {useBillDenomination} from '@site/src/components/bill/useBillTerms';
+import {formatBillCount, formatBillsSum} from '@site/src/components/bill/formatBills';
 import styles from './MyBills.module.css';
 
 const SHOWN_TRANSFERS = 5;
@@ -28,8 +28,7 @@ type BlockscoutTransfer = {
 /** The holder's last transfers of these bills, in and out, with links to the full history. */
 export default function ActivityCard({holder}: { holder: Address }) {
     const contract = useDisplayedContract('BillsOfExchange');
-    const termsResult = useBillTerms();
-    const symbol = termsResult.status === 'ready' ? currencySymbol(termsResult.terms.CURRENCY) : '';
+    const denomination = useBillDenomination();
 
     const {data: transfers, status} = useQuery({
         queryKey: ['holder-transfers', contract.chainId, contract.address, holder],
@@ -64,7 +63,7 @@ export default function ActivityCard({holder}: { holder: Address }) {
                                        rel="noreferrer noopener"><code>{truncateAddress(counterparty)}</code></a>
                                 </span>
                                 <span className={styles.activityAmount}>
-                                    {incoming ? '+' : '−'}{formatBillCount(bills)} bills · {formatBillsSum(bills, symbol)}
+                                    {incoming ? '+' : '−'}{formatBillCount(bills)} bills{denomination && ` · ${formatBillsSum(bills, denomination)}`}
                                 </span>
                                 <a className={styles.activityLink}
                                    href={explorerTransactionUrl(contract.chainId, transfer.transaction_hash)}

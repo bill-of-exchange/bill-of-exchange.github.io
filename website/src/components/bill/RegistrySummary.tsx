@@ -1,13 +1,12 @@
 import React from 'react';
-import {useBillTerms, useRegistryTotals} from './useBillTerms';
-import {currencySymbol, formatBillCount, formatBillsSum} from './formatBills';
+import {useBillDenomination, useRegistryTotals} from './useBillTerms';
+import {formatBillCount, formatBillsSum} from './formatBills';
 import styles from './RegistrySummary.module.css';
 
 /** How many bills exist in each ledger of the registry, and what they are worth. */
 export default function RegistrySummary() {
     const totals = useRegistryTotals();
-    const termsResult = useBillTerms();
-    const symbol = termsResult.status === 'ready' ? currencySymbol(termsResult.terms.CURRENCY) : undefined;
+    const denomination = useBillDenomination();
 
     const figures = [
         {title: 'In circulation', bills: totals?.accepted, note: 'accepted bills: the drawee is liable'},
@@ -19,11 +18,11 @@ export default function RegistrySummary() {
             {figures.map((figure) => (
                 <div key={figure.title} className={styles.figure}>
                     <div className={styles.title}>{figure.title}</div>
-                    {figure.bills === undefined || symbol === undefined ? (
+                    {figure.bills === undefined || denomination === undefined ? (
                         <div className={styles.value}>—</div>
                     ) : (
                         <div className={styles.value}>
-                            {formatBillsSum(figure.bills, symbol)}
+                            {formatBillsSum(figure.bills, denomination)}
                             <span className={styles.count}> · {formatBillCount(figure.bills)} bills</span>
                         </div>
                     )}
