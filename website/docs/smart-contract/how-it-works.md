@@ -9,7 +9,7 @@ The `BillsOfExchange` smart contract keeps a registry of electronic bills of exc
 
 This page is an overview. The authoritative description of the legal model, the invariants and the design decisions is the [specification](https://github.com/bill-of-exchange/bill-of-exchange.github.io/blob/master/smart-contracts/contracts/BillOfExchange_Specification.v.0.1.0.md).
 
-:::warning Test networks
+:::warning[Test networks]
 Ethereum test networks are never valid registries for real bills of exchange. Every deployment listed on this site so far is a demonstration, and the names of the parties in it are placeholders.
 :::
 
