@@ -23,3 +23,7 @@ Israel has digitised the clearing of cheques, not the cheque itself. The Bank of
 **Compared with our bills:** the consultation describes a bank-centred instrument tied to an account. Our bills meet several of its aims by construction: an accepted bill cannot bounce for a technical reason, since acceptance is recorded before the bill circulates; it is transferred without physical presentment; and every transfer is recorded on the register. Endorsement is replaced by transfer of the bearer bill. One aim is not met: our bills are payable at sight, so they do not reproduce the credit that a post-dated cheque gives the drawer.
 
 [Bank Leumi: digital cheque (January 2016)](https://marketscreener.com/quote/stock/BANK-LEUMI-LE-ISRAEL-BM-6491695/news/Bank-Leumi-Le-Israel-BM-The-End-of-Paper-Cheques-Approaches-Leumi-Launches-the-Digital-Cheque-21746024) — A bank product for issuing cheques digitally within the bank's own channels.
+
+## Stablecoins 
+
+[Israel clears first shekel-backed stablecoin after two-year review](https://cryptobriefing.com/israel-shekel-backed-stablecoin-approval/) // Crypto Briefing, 2026-04-28 
