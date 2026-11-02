@@ -12,8 +12,7 @@ Israel has digitised the clearing of cheques, not the cheque itself. The Bank of
 
 [Bank of Israel: Digital shekel project – Technological experiment on a distributed platform](https://boi.org.il/en/communication-and-publications/press-releases/digital-shekel-project-technological-experiment-on-a-distributed-platform/) 
 
-
-**Compared with our bills:** a central bank digital currency is the liability of the central bank. An accepted bill is the liability of its acceptor, a bank or another institution; it needs no new money, only the existing law of bills of exchange and an acceptor willing to sign.
+[Bank of Israel waiting for digital euro ahead of digital shekel launch](https://www.marketscreener.com/quote/currency/EURO-US-DOLLAR-EUR-USD-4591/news/Bank-of-Israel-waiting-for-digital-euro-ahead-of-digital-shekel-launch-47351746/) // Reuters, 2024-07-10 
 
 ## Cheques
 
