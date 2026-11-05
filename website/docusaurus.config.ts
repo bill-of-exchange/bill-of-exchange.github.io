@@ -141,7 +141,8 @@ const config: Config = {
                     position: 'left',
                     label: 'Documentation',
                 },
-                {to: '/blog', label: 'Blog', position: 'left'},
+                // The blog is hidden from the menu until it has posts; its pages are still built and served.
+                // {to: '/blog', label: 'Blog', position: 'left'},
                 // ===  Wagmi buttons
                 {type: 'custom-chainSwitcher', position: 'right'},
                 {type: 'custom-connectButtons', position: 'right'},
@@ -187,7 +188,8 @@ const config: Config = {
                      },
                    ],
                  },*/
-                {
+                // Hidden together with the menu link until the blog has posts ("Blog" was the column's only link).
+                /* {
                     title: 'More',
                     items: [
                         {
@@ -195,7 +197,7 @@ const config: Config = {
                             to: '/blog',
                         },
                     ],
-                },
+                }, */
             ],
             // Rendered as HTML (src/theme/Footer/Copyright), so it may contain a link.
             copyright: `Copyright © ${new Date().getFullYear()} <a href="https://github.com/ageyev/" target="_blank" rel="noopener noreferrer">Viktor Ageyev</a>`,

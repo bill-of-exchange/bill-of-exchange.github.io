@@ -30,7 +30,6 @@ export default function BillShowcase() {
     return (
         <section className={styles.showcase}>
             <header className={styles.intro}>
-                <h1 className={styles.heading}>An electronic bill of exchange</h1>
                 <p className={styles.lede}>
                     This is a visual representation of the bill recorded in the smart contract, rendered from the
                     contract's own data.

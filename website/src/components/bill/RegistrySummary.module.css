@@ -1,8 +1,19 @@
+.registry {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.caption {
+    font-size: 0.85rem;
+    color: var(--ifm-color-emphasis-700);
+}
+
 .summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 16px;
-    margin-top: 8px;
 }
 
 .figure {

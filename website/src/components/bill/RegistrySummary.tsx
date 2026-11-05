@@ -1,10 +1,12 @@
 import React from 'react';
+import {useDisplayedContract} from '@site/src/components/contracts/useDisplayedContract';
 import {useBillDenomination, useRegistryTotals} from './useBillTerms';
 import {formatBillCount, formatBillsSum} from './formatBills';
 import styles from './RegistrySummary.module.css';
 
 /** How many bills exist in each ledger of the registry, and what they are worth. */
 export default function RegistrySummary() {
+    const contract = useDisplayedContract('BillsOfExchange');
     const totals = useRegistryTotals();
     const denomination = useBillDenomination();
 
@@ -14,21 +16,26 @@ export default function RegistrySummary() {
     ];
 
     return (
-        <div className={styles.summary}>
-            {figures.map((figure) => (
-                <div key={figure.title} className={styles.figure}>
-                    <div className={styles.title}>{figure.title}</div>
-                    {figure.bills === undefined || denomination === undefined ? (
-                        <div className={styles.value}>—</div>
-                    ) : (
-                        <div className={styles.value}>
-                            {formatBillsSum(figure.bills, denomination)}
-                            <span className={styles.count}> · {formatBillCount(figure.bills)} bills</span>
-                        </div>
-                    )}
-                    <div className={styles.note}>{figure.note}</div>
-                </div>
-            ))}
+        <div className={styles.registry}>
+            {/* On a test network the figures count specimen bills: the caption says so, so that low or zero
+                figures read as a demonstration rather than as a lack of use. */}
+            {contract.chain.testnet === true && <div className={styles.caption}>Testnet demo registry</div>}
+            <div className={styles.summary}>
+                {figures.map((figure) => (
+                    <div key={figure.title} className={styles.figure}>
+                        <div className={styles.title}>{figure.title}</div>
+                        {figure.bills === undefined || denomination === undefined ? (
+                            <div className={styles.value}>—</div>
+                        ) : (
+                            <div className={styles.value}>
+                                {formatBillsSum(figure.bills, denomination)}
+                                <span className={styles.count}> · {formatBillCount(figure.bills)} bills</span>
+                            </div>
+                        )}
+                        <div className={styles.note}>{figure.note}</div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

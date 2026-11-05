@@ -18,6 +18,7 @@ import {currencySymbol} from './formatBills';
 import {guillocheBorderPaths, ROSETTE_PATHS, ROSETTE_SIZE} from './guilloche';
 import {useElementSize} from './useElementSize';
 import BillsOfExchangeAct, {BillsOfExchangeActSection} from '@site/src/components/law/BillsOfExchangeAct';
+import {ElectronicTradeDocumentsActSection} from '@site/src/components/law/ElectronicTradeDocumentsAct';
 import styles from './Bill.module.css';
 
 // The wide layout reproduces a design DESIGN_WIDTH px wide, scaled to the container. Narrower than
@@ -27,7 +28,11 @@ const NARROW_LAYOUT_MAX_WIDTH = 899;
 
 // Not read from the contract: legal characterisations shown on the bill as decided by the project
 // owner. Everything else the bill asserts comes from the contract (specification §3.6).
-const OWNER_APPROVED_SUBTITLE = 'Electronic trade document · payable to bearer';
+// The subtitle reads "Electronic trade document · payable to bearer". Its first part is the term defined in
+// s.2 of the Electronic Trade Documents Act 2023, so it links to that section.
+const OWNER_APPROVED_SUBTITLE_TERM = 'Electronic trade document';
+const OWNER_APPROVED_SUBTITLE_TERM_SECTION = 2;
+const OWNER_APPROVED_SUBTITLE_TRANSFER = 'payable to bearer';
 const OWNER_APPROVED_STAMP_SECTION = 17;
 
 type BillProps = {
@@ -143,7 +148,13 @@ function Face({terms, accepted}: { terms: BillTerms | undefined; accepted: boole
             <header className={styles.header}>
                 <div>
                     <div className={styles.title}>Bill of exchange</div>
-                    <div className={styles.subtitle}>{OWNER_APPROVED_SUBTITLE}</div>
+                    <div className={styles.subtitle}>
+                        <ElectronicTradeDocumentsActSection section={OWNER_APPROVED_SUBTITLE_TERM_SECTION}
+                                                            className={styles.subtitleLink}>
+                            {OWNER_APPROVED_SUBTITLE_TERM}
+                        </ElectronicTradeDocumentsActSection>
+                        {' · '}{OWNER_APPROVED_SUBTITLE_TRANSFER}
+                    </div>
                 </div>
                 <div className={styles.denomination}>
                     <svg className={styles.rosette} viewBox={`0 0 ${ROSETTE_SIZE} ${ROSETTE_SIZE}`} aria-hidden="true">

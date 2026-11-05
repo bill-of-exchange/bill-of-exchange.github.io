@@ -21,3 +21,21 @@
   align-items: center;
   justify-content: center;
 }
+
+/* The introduction above the bill. Short on purpose: the specimen below should be in sight at once. */
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 32px;
+}
+
+/* The page's only h1. */
+.heading {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.lede {
+  margin: 0;
+}

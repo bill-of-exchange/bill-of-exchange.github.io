@@ -16,6 +16,8 @@
     --ink: #1e2a27;
     --muted: #4f5e59; /* 6:1 on --paper */
     --engraving: #2c7a66;
+    /* --engraving darkened for text: 5.6:1 on --paper, where --engraving itself is 4.48:1, just under WCAG AA. */
+    --engraving-text: #24695a;
     --stamp: #233f8f;
     --warning: #8c2a2a;
     --serif: 'EB Garamond', 'Frank Ruhl Libre', Georgia, serif;
@@ -292,6 +294,19 @@
     font-size: max(9.5px, calc(10.5 * var(--px)));
     letter-spacing: 0.12em;
     text-transform: uppercase;
+}
+
+/* The subtitle's term links to the Act: it is set off by colour alone, never underlined. Without an
+   underline, keyboard focus needs its own mark, hence the outline. */
+.subtitleLink,
+.subtitleLink:hover {
+    color: var(--engraving-text);
+    text-decoration: none;
+}
+
+.subtitleLink:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
 }
 
 /* The stamp keeps its ink colour: the link shows itself only on hover and keyboard focus. */
