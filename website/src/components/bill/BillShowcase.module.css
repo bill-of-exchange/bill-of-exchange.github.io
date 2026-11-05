@@ -5,14 +5,10 @@
     padding: 32px 0 48px;
 }
 
-.intro {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.lede {
-    margin: 0;
+/* The caption of the bill: pulled up towards it, so that it reads as the bill's own caption. */
+.caption {
+    margin: -8px 0 0;
+    font-size: 0.9rem;
     color: var(--ifm-color-emphasis-700);
 }
 

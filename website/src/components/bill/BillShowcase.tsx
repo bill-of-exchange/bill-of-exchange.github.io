@@ -29,14 +29,11 @@ export default function BillShowcase() {
 
     return (
         <section className={styles.showcase}>
-            <header className={styles.intro}>
-                <p className={styles.lede}>
-                    This is a visual representation of the bill recorded in the smart contract, rendered from the
-                    contract's own data.
-                </p>
-            </header>
-
             <Bill accepted={acceptance === 'accepted'}/>
+            <p className={styles.caption}>
+                This is a visual representation of the bill recorded in the smart contract, rendered from the
+                contract's own data.
+            </p>
 
             <div className={styles.controls}>
                 <SegmentedControl label="State of the bill" options={ACCEPTANCE_OPTIONS} value={acceptance}
